@@ -1,0 +1,12 @@
+# Hostinger: PHP 8.4 for this document root (their subdomain PHP-version method). App requires 8.3+.
+<FilesMatch ".(php4|php5|php3|php2|php|phtml)$">
+SetHandler application/x-lsphp84
+</FilesMatch>
+
+Options -Indexes
+
+# Send everything that isn't a real file or directory to the Slim front controller.
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
