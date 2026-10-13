@@ -1,3 +1,5 @@
+/* web/src/styles/global.css */
+
 @font-face {
   font-family: 'Finlandica Text';
   src: url('./fonts/FinlandicaText-VariableFont_wght.ttf') format('truetype');
@@ -22,11 +24,16 @@
 :root {
   --font-family: 'Finlandica Text', sans-serif;
   --font-size: 16px;
-  --color-primary: #733294;  ;
+  --color-primary: #733294;
   --color-text: #252525;
   --color-bg: #f8f9fa;
-  --color-dark: #322e32;
-  --color-light: #fbe3fd;
+  /* These are the values used when in light mode */
+}
+
+/* When .dark-mode is applied to the <html> tag, these variables OVERRIDE the root */
+.dark-mode {
+  --color-text: #fbe3fd;
+  --color-bg: #322e32;
 }
 
 body {
@@ -35,25 +42,38 @@ body {
   background-color: var(--color-bg);
   margin: 0;
   padding: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6 {
   font-family: 'Astonpoliz', sans-serif;
   margin: 0;
+  color: inherit; /* Inherit from body/parent */
 }
 
-.dark-mode {
-  background-color: var(--color-dark);
-  color: var(--color-light);
+.theme-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.theme-toggle button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 9999; 
 }
 
 .under-construction {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: inline;
-    justify-items: center;
-    padding-top: 25vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  justify-items: center;
+  padding-top: 15vh;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  z-index: 1;
 }
