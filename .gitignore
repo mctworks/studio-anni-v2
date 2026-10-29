@@ -15,6 +15,7 @@
 anni-dev.env
 .env.example
 /docs/
+/public/media/
 
 bin/migrate.php
 .aider*
