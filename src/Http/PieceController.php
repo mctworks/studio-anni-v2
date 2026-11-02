@@ -17,8 +17,9 @@ use Psr\Http\Message\ServerRequestInterface as Request;
  *   status    comma list of available, sold, in_studio, on_display      (default: all)
  *   origin    original | commission                                    (default: both)
  *   category  category slug; a parent slug also matches its children (people includes hands)
+ *   q         case-insensitive search in title, description, or medium (max 100 characters)
  *   discounted 1 for available or sold originals listed at $100 or less (never on-display pieces)
- *   sort      newest (painted_on DESC; default) | recently_sold (COALESCE(sold_at, painted_on) DESC)
+ *   sort      newest (painted_on DESC; default) | recently_sold (COALESCE(sold_at, painted_on) DESC) | added (created_at DESC)
  *   limit     1 to 50 (default 12)        offset  0 or more (default 0)
  *   200  {"data": [Piece, ...], "meta": {"total": int, "limit": int, "offset": int}}   total ignores limit and offset
  *   400  {"error": "invalid status|origin|category|sort"}
@@ -45,6 +46,7 @@ final class PieceController
     private const SORTS = [
         'newest' => 'p.painted_on DESC, p.id DESC',
         'recently_sold' => 'COALESCE(p.sold_at, p.painted_on) DESC, p.id DESC',
+        'added' => 'p.created_at DESC, p.id DESC',
     ];
     private const MAX_LIMIT = 50;
 
@@ -91,6 +93,19 @@ final class PieceController
             $where[] = 'p.id IN (SELECT pc.piece_id FROM piece_categories pc JOIN categories c ON c.id = pc.category_id
                 WHERE c.slug = ? OR c.parent_id = (SELECT id FROM categories WHERE slug = ?))';
             array_push($params, $q['category'], $q['category']);
+        }
+
+        if (isset($q['q'])) {
+            if (! is_string($q['q']) || mb_strlen($q['q'], 'UTF-8') > 100) {
+                return $this->json($response, ['error' => 'invalid q'], 400);
+            }
+            $term = trim($q['q']);
+            if ($term !== '') {
+                $where[] = "(LOCATE(LOWER(?), LOWER(COALESCE(p.title, ''))) > 0
+                    OR LOCATE(LOWER(?), LOWER(COALESCE(p.description, ''))) > 0
+                    OR LOCATE(LOWER(?), LOWER(COALESCE(p.medium, ''))) > 0)";
+                array_push($params, $term, $term, $term);
+            }
         }
 
         if (isset($q['discounted'])) {
@@ -150,11 +165,11 @@ final class PieceController
         $in = implode(',', array_fill(0, count($ids), '?'));
 
         $images = [];
-        $stmt = $this->pdo->prepare("SELECT piece_id, filename, kind, alt_text FROM piece_images WHERE piece_id IN ($in) ORDER BY piece_id, sort_order, id");
+        $stmt = $this->pdo->prepare("SELECT i.piece_id, i.filename, i.kind, i.alt_text, p.updated_at AS image_version FROM piece_images i JOIN pieces p ON p.id = i.piece_id WHERE i.piece_id IN ($in) ORDER BY i.piece_id, i.sort_order, i.id");
         $this->run($stmt, $ids);
         foreach ($stmt as $img) {
             $images[(int) $img['piece_id']][] = [
-                'url' => '/media/pieces/' . rawurlencode((string) $img['filename']),
+            'url' => '/media/pieces/' . rawurlencode((string) $img['filename']) . '?v=' . rawurlencode((string) $img['image_version']),
                 'kind' => $img['kind'],
                 'alt' => $img['alt_text'],
             ];

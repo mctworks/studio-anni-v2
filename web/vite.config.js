@@ -15,10 +15,12 @@ const localMedia = () => ({
       } catch {
         return next();
       }
-      if (!file.startsWith(root + path.sep) || !file.endsWith('.jpg') || !existsSync(file) || !statSync(file).isFile()) {
+      const extension = path.extname(file).toLowerCase();
+      const contentTypes = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png' };
+      if (!file.startsWith(root + path.sep) || !contentTypes[extension] || !existsSync(file) || !statSync(file).isFile()) {
         return next();
       }
-      res.setHeader('Content-Type', 'image/jpeg');
+      res.setHeader('Content-Type', contentTypes[extension]);
       createReadStream(file).pipe(res);
     });
   },
@@ -34,6 +36,10 @@ export default defineConfig(({ command, mode }) => {
     server: {
       proxy: {
         '/api': {
+          target: env.API_PROXY_TARGET || 'http://localhost:5173',
+          changeOrigin: true,
+        },
+        '/media': {
           target: env.API_PROXY_TARGET || 'http://localhost:5173',
           changeOrigin: true,
         },

@@ -21,7 +21,7 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
         $response = $handler->handle($request);
 
         $connect = trim("'self' " . $this->config->get('CSP_CONNECT_EXTRA', ''));
-        $img = trim("'self' data: blob: " . $this->config->get('CSP_IMG_EXTRA', ''));
+        $img = trim("'self' data: blob: https://cdn.bsky.app " . $this->config->get('CSP_IMG_EXTRA', ''));
         $policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src {$img}; font-src 'self'; connect-src {$connect}; "
             . "object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'";
         $cspHeader = $this->config->get('CSP_MODE', 'report-only') === 'enforce' ? 'Content-Security-Policy' : 'Content-Security-Policy-Report-Only';

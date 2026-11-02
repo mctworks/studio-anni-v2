@@ -286,6 +286,11 @@ h1, h2, h3, h4, h5, h6 {
   padding-bottom: clamp(2.5rem, 6vw, 5rem);
 }
 
+.content-page {
+  padding-top: clamp(2.5rem, 6vw, 5rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
 .bluesky-section {
   padding: 1.5rem;
   background-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-end));
@@ -494,6 +499,7 @@ span.bsky-pg-count {
 }
 
 .homepage > h2,
+.content-page > h1,
 .gallery-page > h1 {
   margin-bottom: 1.5rem;
   font-size: clamp(2rem, 4vw, 3rem);
@@ -727,6 +733,89 @@ span.bsky-pg-count {
   margin-top: 2rem;
 }
 
+.gallery-page__banner {
+  margin: 0 0 1.5rem;
+}
+
+.archive-page__filters {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(220px, 0.8fr);
+  gap: 1.25rem;
+  margin: 2rem 0 1.5rem;
+  align-items: end;
+}
+
+.archive-page__search,
+.archive-page__category {
+  display: grid;
+  gap: 0.5rem;
+  font-weight: 700;
+}
+
+.archive-page__search-row {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.archive-page__search input,
+.archive-page__category select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.8rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, var(--color-text));
+  border-radius: 0.5rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+}
+
+.archive-page__search input:focus-visible,
+.archive-page__category select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.archive-page__count {
+  margin: 1.5rem 0 0;
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+}
+
+.archive-page__pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 2rem;
+}
+
+.archive-page__pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.archive-similar {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-primary) 24%, transparent);
+}
+
+.archive-similar h2 {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.piece-detail__commission {
+  padding: 1rem;
+  border-left: 3px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 7%, var(--color-bg));
+}
+
+.piece-detail__commission span {
+  display: block;
+  margin-top: 0.35rem;
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+}
+
 .gallery-page__selectors {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -861,6 +950,10 @@ span.bsky-pg-count {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .archive-page__filters {
+    grid-template-columns: 1fr;
+  }
+
   .purchase-grid {
     grid-template-columns: 1fr;
   }
@@ -890,5 +983,10 @@ span.bsky-pg-count {
   .piece-grid--stacked,
   .gallery-page__selectors {
     grid-template-columns: 1fr;
+  }
+
+  .archive-page__search-row,
+  .archive-page__pagination {
+    flex-wrap: wrap;
   }
 }

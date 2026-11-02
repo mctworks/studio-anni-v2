@@ -1,0 +1,305 @@
+.mim-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.mim-wrap input,
+.mim-wrap select,
+.mim-wrap textarea,
+.mim-login input,
+.mim-wrap button,
+.mim-login button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-text) 35%, transparent);
+  border-radius: 4px;
+  padding: 0.4rem 0.6rem;
+}
+
+.mim-wrap select option,
+.mim-wrap select optgroup {
+  color: #252525;
+  background: #fff;
+}
+
+.mim-wrap button,
+.mim-login button,
+.mim-btn {
+  cursor: pointer;
+}
+
+.mim-wrap button:disabled,
+.mim-login button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mim-btn {
+  display: inline-block;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  background: var(--color-primary);
+  color: #fff;
+  text-decoration: none;
+}
+
+button.mim-link {
+  border: none;
+  padding: 0;
+  background: none;
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.mim-wrap a,
+.mim-login a {
+  color: var(--color-primary);
+}
+
+.dark-mode .mim-wrap a,
+.dark-mode .mim-login a,
+.dark-mode button.mim-link {
+  color: #d9a8f0;
+}
+
+.mim-login {
+  max-width: 340px;
+  margin: 0 auto;
+  padding: 20vh 1rem 1rem;
+}
+
+.mim-login form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.mim-login label {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.mim-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.mim-header span {
+  margin-left: auto;
+}
+
+.mim-brand {
+  font-family: 'Astonpoliz', sans-serif;
+  font-size: 1.6rem;
+  text-decoration: none;
+}
+
+.mim-bar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.mim-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.mim-check {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.mim-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mim-table th,
+.mim-table td {
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent);
+  vertical-align: middle;
+}
+
+.mim-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 3px;
+  display: block;
+}
+
+.mim-muted {
+  opacity: 0.55;
+}
+
+.mim-actions {
+  display: flex;
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+.mim-pager {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.mim-form fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+  display: grid;
+  gap: 1rem;
+}
+
+.mim-field {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.mim-field > span {
+  font-weight: 600;
+}
+
+.mim-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.mim-nested {
+  display: grid;
+  margin-left: 1.5rem;
+}
+
+.mim-banner {
+  padding: 0.6rem 0.8rem;
+  border-radius: 4px;
+  border: 1px solid var(--color-primary);
+}
+
+.mim-error {
+  color: #b3261e;
+}
+
+.dark-mode .mim-error {
+  color: #ff8a80;
+}
+
+.mim-ok {
+  color: #2e7d32;
+}
+
+.dark-mode .mim-ok {
+  color: #81c784;
+}
+
+.mim-images ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.mim-images li {
+  display: grid;
+  gap: 0.25rem;
+  max-width: 160px;
+}
+
+.mim-note {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.mim-wm-editor {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.mim-wm-stage {
+  display: flex;
+  justify-content: center;
+}
+
+.mim-wm-box {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  line-height: 0;
+  user-select: none;
+  touch-action: none;
+}
+
+.mim-wm-base {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 70vh;
+}
+
+.mim-wm-mark {
+  position: absolute;
+  cursor: move;
+  touch-action: none;
+  outline: 1px dashed rgba(255, 255, 255, 0.8);
+}
+
+.mim-wm-mark img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mim-wm-handle {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #fff;
+  border-radius: 3px;
+  background: var(--color-primary);
+  cursor: nwse-resize;
+  touch-action: none;
+}
+
+.mim-wm-controls {
+  display: grid;
+  gap: 1rem;
+}
+
+.mim-wm-logos {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.mim-images li img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 4px;
+}

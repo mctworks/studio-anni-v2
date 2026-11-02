@@ -211,11 +211,8 @@ const LandingPage = () => {
 
       <div className="container homepage">
         <h2>Past Works</h2>
-        {/*TO-DO: Choose key artwork(s) for this section */}
         <p className="section-lede">A vast portfolio of Anni's previous work, including pieces remaining in the studio, art that has been used in film, past commissions and sold works. Please note that this is an archive, and that none of the works presented are available to purchase in any form.</p>
-        <div className="piece-grid piece-grid--three">
-          {/*TO-DO: Display the four most recent additions to the archive */}
-        </div>
+        <button className="page-nav-button" type="button" onClick={() => navigate('/archive')}>Explore the archive <span aria-hidden="true">→</span></button>
       </div>
 
       <div className="container homepage">

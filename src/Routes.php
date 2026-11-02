@@ -13,6 +13,7 @@ use App\Http\Middleware\CsrfMiddleware;
 use App\Http\Middleware\SessionMiddleware;
 use App\Http\MimosaAuthController;
 use App\Http\MimosaPieceController;
+use App\Http\MimosaImageController;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\App;
 
@@ -34,6 +35,14 @@ final class Routes
             $p->patch('/pieces/{id:[0-9]+}', MimosaPieceController::class . ':update');
             $p->delete('/pieces/{id:[0-9]+}', MimosaPieceController::class . ':delete');
             $p->post('/pieces/{id:[0-9]+}/restore', MimosaPieceController::class . ':restore');
+            $p->get('/images/config', MimosaImageController::class . ':config');
+            $p->get('/watermarks/{variant:dark|light}', MimosaImageController::class . ':logo');
+            $p->get('/pieces/{id:[0-9]+}/images', MimosaImageController::class . ':index');
+            $p->post('/pieces/{id:[0-9]+}/images', MimosaImageController::class . ':upload');
+            $p->get('/images/{id:[0-9]+}/base', MimosaImageController::class . ':base');
+            $p->post('/images/{id:[0-9]+}/watermark', MimosaImageController::class . ':watermark');
+            $p->post('/images/{id:[0-9]+}/watermark/review', MimosaImageController::class . ':reviewWatermark');
+            $p->delete('/images/{id:[0-9]+}/watermark', MimosaImageController::class . ':unwatermark');
         })->add(AuthMiddleware::class);
         })->add(CsrfMiddleware::class)->add(SessionMiddleware::class);
         $app->get('/api/health', HealthController::class);
