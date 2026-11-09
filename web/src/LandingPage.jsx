@@ -2,9 +2,15 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from './assets/sa-logo-v2.svg';
 import logoDark from './assets/sa-logo-v2-dark-mode.svg';
-import galleryIcon from './assets/galleries-icon-light-mode.svg';
+import archiveIconDark from './assets/archive-icon-dark-mode.svg';
+import archiveIconLight from './assets/archive-icon-light-mode.svg';
 import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
+import galleryIconLight from './assets/galleries-icon-light-mode.svg';
+import { useTheme } from './ThemeContext.jsx';
 import BlueskyFeed from './BlueskyFeed.jsx';
+import displayLocations from './displayLocations.json';
+
+const locationImages = import.meta.glob('./assets/images/*', { eager: true, query: '?url', import: 'default' });
 
 const commissionAvailability = 'unknown';
 
@@ -47,13 +53,14 @@ const PieceCard = ({ piece, showPrice = false }) => {
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
   const [health, setHealth] = useState('checking');
-  const [isDarkMode, setIsDarkMode] = useState(false);
   const [commissions, setCommissions] = useState([]);
   const [availablePieces, setAvailablePieces] = useState([]);
+  const [archivePieces, setArchivePieces] = useState([]);
   const [displayPieces, setDisplayPieces] = useState([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
-  const [catalogErrors, setCatalogErrors] = useState({ commissions: false, available: false });
+  const [catalogErrors, setCatalogErrors] = useState({ commissions: false, available: false, archive: false });
 
   useEffect(() => {
     fetch('/api/health')
@@ -63,16 +70,6 @@ const LandingPage = () => {
       })
       .then((d) => setHealth(d.status))
       .catch(() => setHealth('API unreachable'));
-
-    const updateTheme = () => {
-      setIsDarkMode(document.documentElement.classList.contains('dark-mode'));
-    };
-
-    updateTheme();
-
-    // Watch for class changes on <html> tag (triggered by ThemeToggle)
-    const observer = new MutationObserver(updateTheme);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
 
     const controller = new AbortController();
     const fetchPieces = async (query) => {
@@ -85,23 +82,25 @@ const LandingPage = () => {
     Promise.allSettled([
       fetchPieces('origin=commission&sort=newest&limit=3'),
       fetchPieces('status=available&sort=newest&limit=4'),
+      fetchPieces('status=sold,in_studio&origin=original&sort=recently_sold&limit=4'),
       fetchPieces('status=on_display&sort=newest&limit=50'),
     ])
       .then((results) => {
         if (controller.signal.aborted) return;
-        const [latestCommissions, latestAvailable, currentlyDisplayed] = results;
+        const [latestCommissions, latestAvailable, latestArchive, currentlyDisplayed] = results;
         if (latestCommissions.status === 'fulfilled') setCommissions(latestCommissions.value);
         if (latestAvailable.status === 'fulfilled') setAvailablePieces(latestAvailable.value);
+        if (latestArchive.status === 'fulfilled') setArchivePieces(latestArchive.value);
         if (currentlyDisplayed.status === 'fulfilled') setDisplayPieces(currentlyDisplayed.value);
         setCatalogErrors({
           commissions: latestCommissions.status === 'rejected',
           available: latestAvailable.status === 'rejected',
+          archive: latestArchive.status === 'rejected',
         });
       })
       .finally(() => setCatalogLoading(false));
 
     return () => {
-      observer.disconnect();
       controller.abort();
     };
   }, []);
@@ -134,7 +133,6 @@ const LandingPage = () => {
         <h2>Latest From Anni</h2>
         {/* TO-DO: Promo component*/}
 
-        <h3>Anni on Bluesky Social</h3>
         <div className="bluesky-section">
           <BlueskyFeed />
         </div>
@@ -168,7 +166,7 @@ const LandingPage = () => {
           <div className="purchase-intro">
             <p>The collection galleries include original acrylic paintings by Anni. While she is probably best known for her painstakingly detailed paintings of animals, her body of work includes nature, people, space, fantasy and landscapes. Her pieces are available for purchase here at reasonable prices. We normally ship pieces via USPS, though for customers local to the greater Atlanta area, we can arrange for pick up.</p>
             <button className="page-nav-button" type="button" onClick={() => navigate('/gallery')}>
-              <img src={galleryIconDark}
+              <img src={isDarkMode ? galleryIconDark : galleryIconLight}
                 alt="Galleries"
                 width="24"
                 height="24"
@@ -190,14 +188,29 @@ const LandingPage = () => {
         <div className="container homepage">
           <h2>Outside The Studio</h2>
           <p className="section-lede">A selection of Anni's work is currently on display in person.</p>
-          {venues.map((venue) => (
-            <section className="outside-venue" key={venue}>
-              <h3>Currently on Display at {venue}</h3>
-              <div className="piece-grid piece-grid--three">
-                {displayPieces.filter((piece) => piece.status_note === venue).map((piece) => <PieceCard key={piece.id} piece={piece} />)}
-              </div>
-            </section>
-          ))}
+          {venues.map((venue) => {
+            const location = displayLocations.find((item) => item.name.toLocaleLowerCase() === venue.trim().toLocaleLowerCase());
+            const image = locationImages[`./assets/images/${location?.image}`];
+
+            return (
+              <section className="outside-venue" key={venue}>
+                <h3>Currently on Display at {venue}</h3>
+                <div className="piece-grid piece-grid--three">
+                  {displayPieces.filter((piece) => piece.status_note === venue).map((piece) => <PieceCard key={piece.id} piece={piece} />)}
+                </div>
+                {location && (
+                  <div className="outside-venue__details">
+                    {image && <img className="outside-venue__image" src={image} alt={location.imageAlt} loading="lazy" />}
+                    <div className="outside-venue__contact">
+                      <p><a href={`https://maps.google.com/?q=${encodeURIComponent(location.address)}`} target="_blank" rel="noreferrer">{location.address}</a></p>
+                      <p>{location.hours}</p>
+                      <a href={location.website} target="_blank" rel="noreferrer">Visit {location.name} website <span aria-hidden="true">↗</span></a>
+                    </div>
+                  </div>
+                )}
+              </section>
+            );
+          })}
           {displayPieces.some((piece) => !piece.status_note) && (
             <section className="outside-venue">
               <h3>Currently on Display</h3>
@@ -211,8 +224,28 @@ const LandingPage = () => {
 
       <div className="container homepage">
         <h2>Past Works</h2>
-        <p className="section-lede">A vast portfolio of Anni's previous work, including pieces remaining in the studio, art that has been used in film, past commissions and sold works. Please note that this is an archive, and that none of the works presented are available to purchase in any form.</p>
-        <button className="page-nav-button" type="button" onClick={() => navigate('/archive')}>Explore the archive <span aria-hidden="true">→</span></button>
+        <div className="purchase-grid">
+          <div className="piece-grid piece-grid--stacked">
+            {archivePieces.slice(0, 2).map((piece) => <PieceCard key={piece.id} piece={piece} />)}
+          </div>
+          <div className="purchase-intro">
+            <p>A selection of Anni's past work, including sold paintings and pieces remaining in the studio. These archived works are not available to purchase.</p>
+            <button className="page-nav-button" type="button" onClick={() => navigate('/archive')}>
+              <img src={isDarkMode ? archiveIconDark : archiveIconLight}
+                alt="Archive"
+                width="24"
+                height="24"
+              />
+              Explore the archive <span aria-hidden="true">→</span>
+            </button>
+          </div>
+          <div className="piece-grid piece-grid--stacked">
+            {archivePieces.slice(2, 4).map((piece) => <PieceCard key={piece.id} piece={piece} />)}
+          </div>
+        </div>
+        {!catalogLoading && archivePieces.length === 0 && (
+          <p className="catalog-message">{catalogErrors.archive ? 'Past works are temporarily unavailable.' : 'There are no archived works to show right now.'}</p>
+        )}
       </div>
 
       <div className="container homepage">

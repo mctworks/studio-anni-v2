@@ -1,0 +1,91 @@
+.account-page {
+  padding-top: clamp(1.5rem, 4vw, 3rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
+.account-form {
+  display: grid;
+  gap: 1rem;
+  max-width: 28rem;
+}
+
+.account-field {
+  display: grid;
+  gap: 0.35rem;
+  font-weight: 700;
+}
+
+.account-field input {
+  padding: 0.6rem 0.75rem;
+  border: 2px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  border-radius: 7px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  font-weight: 400;
+}
+
+.account-check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.account-error {
+  color: #a23b46;
+  font-size: 0.9rem;
+}
+
+.account-note,
+.account-meta {
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+}
+
+.account-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.account-hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.account-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  overflow: hidden;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--color-primary) 22%, transparent);
+  color: var(--color-text);
+  font-weight: 700;
+  object-fit: cover;
+}
+
+.account-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.account-avatar-actions {
+  display: grid;
+  gap: 0.35rem;
+  justify-items: start;
+}
+
+.account-profile-head {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}

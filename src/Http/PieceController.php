@@ -8,37 +8,6 @@ use PDO;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
-/**
- * Read-only catalog API (JSON). Every request queries the database named by DB_* in .env, so it only works where that
- * database is reachable: on Hostinger staging that is the server's own database. A code change here has no effect on
- * staging until src/ is uploaded there (section 12 of the outline); the Vite dev server only proxies /api to API_PROXY_TARGET.
- *
- * GET /api/pieces
- *   status    comma list of available, sold, in_studio, on_display      (default: all)
- *   origin    original | commission                                    (default: both)
- *   category  category slug; a parent slug also matches its children (people includes hands)
- *   q         case-insensitive search in title, description, or medium (max 100 characters)
- *   discounted 1 for available or sold originals listed at $100 or less (never on-display pieces)
- *   sort      newest (painted_on DESC; default) | recently_sold (COALESCE(sold_at, painted_on) DESC) | added (created_at DESC)
- *   limit     1 to 50 (default 12)        offset  0 or more (default 0)
- *   200  {"data": [Piece, ...], "meta": {"total": int, "limit": int, "offset": int}}   total ignores limit and offset
- *   400  {"error": "invalid status|origin|category|sort"}
- *
- * GET /api/pieces/{id}
- *   200  {"data": Piece}   Piece plus "images": [Image, ...] (every image, in sort order)
- *   404  {"error": "not found"}   missing, soft-deleted, or never imported (piece 29 was the V1 placeholder)
- *
- * Piece  {id, slug, title, description, medium, status, status_note, origin, purchase_mode,
- *         painted_on ("YYYY-MM-DD" or null), size (e.g. '12" x 16"'), categories: [{slug, name}],
- *         price_cents (int; null unless status is available), listed_price_cents (int),
- *         sale_price_cents (int; null unless a sale is active: sale_ends_at empty or in the future),
- *         image (Image or null; the first image)}
- * Image  {url ("/media/pieces/<file>.jpg"), kind (main|angle|detail), alt (string or null)}
- *
- * Image files are not served by this API. They are static files in public/media/pieces/ (Vite dev: served from ../public/media).
- * Pieces with no category (53 after the V1 import) never match a category filter.
- * Example: /api/pieces?category=pets-animals&origin=commission&limit=4   (the last four pet commissions, newest first)
- */
 final class PieceController
 {
     private const STATUSES = ['available', 'sold', 'in_studio', 'on_display'];

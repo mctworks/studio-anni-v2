@@ -1,37 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useTheme } from './ThemeContext.jsx';
 import darkModeIcon from './assets/dark-mode-icon.svg';
 import lightModeIcon from './assets/light-mode-icon.svg';
 
 const ThemeToggle = () => {
-  const [mode, setMode] = useState('light');
-
-  useEffect(() => {
-    const systemPreference = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    setMode(systemPreference);
-    document.documentElement.className = systemPreference === 'dark' ? 'dark-mode' : '';
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e) => {
-      const newMode = e.matches ? 'dark' : 'light';
-      setMode(newMode);
-      document.documentElement.className = newMode === 'dark' ? 'dark-mode' : '';
-    };
-
-    mediaQuery.addListener(handleChange);
-    return () => mediaQuery.removeListener(handleChange);
-  }, []);
-
-  const toggleMode = () => {
-    const newMode = mode === 'light' ? 'dark' : 'light';
-    setMode(newMode);
-    document.documentElement.className = newMode === 'dark' ? 'dark-mode' : '';
-  };
+  const { isDarkMode, toggleTheme } = useTheme();
 
   return (
     <div className="theme-toggle">
-      <button onClick={toggleMode} className="theme-toggle-btn">
+      <button onClick={toggleTheme} className="theme-toggle-btn" aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}>
         <img 
-          src={mode === 'light' ? darkModeIcon : lightModeIcon} 
+          src={isDarkMode ? lightModeIcon : darkModeIcon} 
           alt="Toggle Theme" 
           className="theme-icon" 
           width="24"

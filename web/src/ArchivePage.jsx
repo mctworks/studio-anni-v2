@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import archiveIconDark from './assets/archive-icon-dark-mode.svg';
+import archiveIconLight from './assets/archive-icon-light-mode.svg';
+import { useTheme } from './ThemeContext.jsx';
+import KenBurnsSlideshow from './KenBurnsSlideshow.jsx';
 
 const categories = [
   { slug: 'pets-animals', name: 'Animals' },
@@ -11,15 +15,36 @@ const categories = [
 
 const PAGE_SIZE = 15;
 const statusLabel = { sold: 'Sold', in_studio: 'In studio', on_display: 'On display' };
+const ARCHIVE_BANNER_SLUGS = [
+  '36-tiger-baron',
+  '69-najla',
+  '114-walter-relaxing-in-sunbeams',
+  '115-emma-haha',
+  '17-baby-huck',
+];
+const ARCHIVE_BANNER_CONFIG = {
+  intervalMs: 5630,
+  fadeMs: 1800,
+  aspectRatio: '16 / 7',
+  effects: [
+    'classic-in-bottom-left-center',
+    'pan-left-right',
+    'zoom-out-center',
+    'classic-in-top-right',
+  ],
+  frameEffect: 'fade',
+};
 
 const ArchivePage = () => {
   const navigate = useNavigate();
+  const { isDarkMode } = useTheme();
   const [searchParams, setSearchParams] = useSearchParams();
   const query = searchParams.get('q') ?? '';
   const categoryParam = searchParams.get('category') ?? '';
   const category = categories.find((item) => item.slug === categoryParam)?.slug ?? '';
   const page = Math.max(1, Number.parseInt(searchParams.get('page') ?? '1', 10) || 1);
   const [searchInput, setSearchInput] = useState(query);
+  const [bannerImages, setBannerImages] = useState([]);
   const [pieces, setPieces] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -27,6 +52,34 @@ const ArchivePage = () => {
   const pageCount = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   useEffect(() => setSearchInput(query), [query]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const loadBannerImages = async () => {
+      try {
+        const results = await Promise.all(ARCHIVE_BANNER_SLUGS.map(async (pieceSlug) => {
+          const response = await fetch(`/api/pieces/${encodeURIComponent(pieceSlug)}`, { signal: controller.signal });
+          if (!response.ok) return null;
+          const result = await response.json();
+          return result.data;
+        }));
+        if (controller.signal.aborted) return;
+
+        setBannerImages(results
+          .filter((piece) => piece?.image?.url)
+          .map((piece) => ({
+            id: piece.id,
+            src: piece.image.url,
+            alt: piece.image.alt || piece.title,
+          })));
+      } catch (reason) {
+        if (reason.name !== 'AbortError') setBannerImages([]);
+      }
+    };
+
+    loadBannerImages();
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -96,9 +149,16 @@ const ArchivePage = () => {
 
   return (
     <section className="container content-page archive-page">
-      <button className="page-nav-button" type="button" onClick={() => navigate('/')}>← Back to Studio Anni</button>
-      <p className="eyebrow">Studio Anni collection</p>
-      <h1>Past Works</h1>
+      <button className="page-nav-button" type="button" onClick={() => navigate('/')}>← Back to Home</button>
+      <p className="eyebrow">Studio Anni Archives</p>
+      <KenBurnsSlideshow
+        {...ARCHIVE_BANNER_CONFIG}
+        images={bannerImages}
+        className="gallery-page__banner"
+        ariaLabel="Featured paintings from the archive"
+      >
+        <h1><img src={isDarkMode ? archiveIconDark : archiveIconLight} alt="Archive" width="25%" height="25%" /><br/> PAST WORKS</h1>
+      </KenBurnsSlideshow>
       <p className="section-lede">Browse paintings that have sold, are in the studio, or are currently on display. Archived works are not available for purchase.</p>
 
       <div className="archive-page__filters">

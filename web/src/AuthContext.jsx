@@ -1,7 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { api, clearCsrf } from './mimosa/api.js';
+import { account } from './account/api.js';
+import { clearCsrf } from './mimosa/api.js';
 
-const KEY = 'sa_staff';
+const KEY = 'sa_user';
 const Ctx = createContext(null);
 
 export const isStaff = (u) => u?.role === 'owner' || u?.role === 'admin';
@@ -29,31 +30,24 @@ export function AuthProvider({ children }) {
 
   const setUser = useCallback((u) => {
     setUserState(u);
-    hint.set(isStaff(u));
+    hint.set(Boolean(u));
   }, []);
 
   useEffect(() => {
     if (!hint.get()) return undefined;
     let off = false;
-    api
-      .get('/me')
-      .then((d) => {
-        if (!off) setUser(d.user);
-      })
-      .catch((e) => {
-        if (!off && (e.status === 401 || e.status === 404)) hint.set(false);
-      });
+    account.me().then((r) => {
+      if (off) return;
+      if (r.ok) setUser(r.data.user);
+      else if (r.status === 401 || r.status === 404) hint.set(false);
+    });
     return () => {
       off = true;
     };
   }, [setUser]);
 
   const logout = useCallback(async () => {
-    try {
-      await api.post('/logout', {});
-    } catch {
-      // session is dropped client-side regardless
-    }
+    await account.logout();
     clearCsrf();
     setUser(null);
   }, [setUser]);

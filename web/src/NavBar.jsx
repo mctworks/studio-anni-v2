@@ -1,21 +1,17 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { stack as StackMenu } from 'react-burger-menu';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from './AuthContext.jsx';
+import { useTheme } from './ThemeContext.jsx';
 import shopbagDark from './assets/shopbag-icon-dark-mode.svg';
 import shopbagLight from './assets/shopbag-icon-light-mode.svg';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const { user, staff, logout } = useAuth();
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode } = useTheme();
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // READ ONCE ON MOUNT. DO NOT OBSERVE.
-  useEffect(() => {
-    setIsDarkMode(document.documentElement.classList.contains('dark-mode'));
-  }, []);
 
   const handleMenuStateChange = useCallback(({ isOpen }) => {
     setMenuOpen(isOpen);
@@ -67,6 +63,9 @@ const NavBar = () => {
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/about'); }}>About</button>
           {staff && (
             <button type="button" onClick={() => { setMenuOpen(false); navigate('/mimosa'); }}>MIMOSA</button>
+          )}
+          {user && !staff && (
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/account'); }}>My account</button>
           )}
           {user ? (
             <button type="button" onClick={async () => { setMenuOpen(false); await logout(); navigate('/'); }}>Sign out</button>

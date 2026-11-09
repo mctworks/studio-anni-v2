@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import bskyLogo from './assets/bluesky-icon.svg';
 
 const FEED_LIMIT = 25;
 const POPULAR_LIMIT = 5;
@@ -82,7 +83,7 @@ const RcbScore = ({ post }) => {
   const score = calculateRcbScore(post);
   return (
     <div>
-      <span>RCB Score</span>
+      <span>RCB Score*: </span>
       <strong>{score}</strong>
     </div>
   );
@@ -237,6 +238,9 @@ const BlueskyFeed = () => {
           <p className="bsky-text">
             Popular posts are ranked by RCB Score among the latest {posts.length} posts.
           </p>
+          <button type="button" className="bsky-lb-button" onClick={() => setShowPopular(false)}>
+            Back to latest
+          </button>
         </div>
       </section>
     );
@@ -249,12 +253,14 @@ const BlueskyFeed = () => {
 
   return (
     <section aria-label="Latest Bluesky posts">
-      <article className="purchase-intro">
+      
+      <article className="bluesky-post">
         <header>
-          {post.author?.avatar && <img src={post.author.avatar} alt="" width="48" height="48" loading="lazy" />}
-          <div>
+          <h3 className="bsky-heading">Anni on Bluesky Social</h3>
+          {post.author?.avatar && <img src={post.author.avatar} alt="{post.author?.displayName || post.author?.handle || 'Bluesky user'}" width="48" height="48" loading="lazy" />}
+          <div className="bsky-post-header">
             <a href={post.author?.handle ? `https://bsky.app/profile/${post.author.handle}` : 'https://bsky.app'} target="_blank" rel="noreferrer">
-              {post.author?.displayName || post.author?.handle || 'Bluesky user'}
+              <b>{post.author?.displayName || post.author?.handle || 'Bluesky user'}</b>
             </a>
             <time dateTime={post.record?.createdAt}>
               {new Date(post.record?.createdAt).toLocaleString()}
@@ -270,9 +276,16 @@ const BlueskyFeed = () => {
           <p>This post has a content label. Open it on Bluesky to view the labeled content.</p>
         ) : <PostMedia embed={post.embed} />}
 
-        <footer>
-          <a className="page-nav-button" href={postUrl} target="_blank" rel="noreferrer">View on Bluesky</a>
-          <RcbScore post={post} />
+        <footer className="bsky-post-footer">
+          <div className="bsky-post-engagement" aria-label="Post engagement counts">
+            <span className="bsky-engagement-count">❤️️ {Number(post.likeCount || 0).toLocaleString()}</span>
+            <span className="bsky-engagement-count">🔄 {Number(post.repostCount || 0).toLocaleString()}</span>
+            <span className="bsky-engagement-count">💬 {Number(post.replyCount || 0).toLocaleString()}</span>
+          </div>
+          <div className="bsky-post-footer-actions">
+            <a className="page-nav-button" href={postUrl} target="_blank" rel="noreferrer">View on Bsky</a>
+            <RcbScore post={post} />
+          </div>
         </footer>
       </article>
 
@@ -283,6 +296,9 @@ const BlueskyFeed = () => {
           <button type="button" className="page-nav-button" onClick={() => changePost(-1)} disabled={currentIndex === 0}>Next →</button>
         </div>
         <button type="button" className="page-nav-button" onClick={() => setShowPopular(true)}>Popular posts</button>
+        <div className="bsky-pg-bottom">
+          <a className="page-nav-button" href="https://bsky.app/profile/studioanni.com">Follow <img src={bskyLogo} alt="Bluesky" width="16" height="16" />studioanni.com</a>
+        </div>
       </div>
     </section>
   );

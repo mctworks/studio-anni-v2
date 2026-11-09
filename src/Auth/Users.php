@@ -6,7 +6,7 @@ namespace App\Auth;
 
 final class Users
 {
-    private const COLUMNS = 'id, email, display_name, password_hash, role, status, totp_secret_enc, totp_enrolled_at, totp_last_step';
+    private const COLUMNS = 'id, email, display_name, password_hash, role, status, email_verified_at, totp_secret_enc, totp_enrolled_at, totp_last_step';
 
     public function __construct(private readonly \PDO $pdo)
     {

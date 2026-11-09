@@ -4,16 +4,22 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Http\CustomerAuthController;
 use App\Http\HealthController;
 use App\Http\BlueskyController;
 use App\Http\PieceController;
 use App\Http\SpaController;
+use App\Http\PublicProfileController;
+use App\Http\Middleware\AccountsSwitchMiddleware;
+use App\Http\Middleware\CustomerAuthMiddleware;
 use App\Http\Middleware\AuthMiddleware;
 use App\Http\Middleware\CsrfMiddleware;
 use App\Http\Middleware\SessionMiddleware;
 use App\Http\MimosaAuthController;
 use App\Http\MimosaPieceController;
 use App\Http\MimosaImageController;
+use App\Http\MimosaUserController;
+use App\Http\PasswordResetController;
 use Slim\Routing\RouteCollectorProxy;
 use Slim\App;
 
@@ -43,8 +49,36 @@ final class Routes
             $p->post('/images/{id:[0-9]+}/watermark', MimosaImageController::class . ':watermark');
             $p->post('/images/{id:[0-9]+}/watermark/review', MimosaImageController::class . ':reviewWatermark');
             $p->delete('/images/{id:[0-9]+}/watermark', MimosaImageController::class . ':unwatermark');
+            $p->get('/users', MimosaUserController::class . ':index');
+            $p->get('/users/{id:[0-9]+}', MimosaUserController::class . ':show');
+            $p->patch('/users/{id:[0-9]+}', MimosaUserController::class . ':update');
+            $p->post('/users/{id:[0-9]+}/pieces', MimosaUserController::class . ':assignPiece');
+            $p->delete('/users/{id:[0-9]+}/pieces/{pieceId:[0-9]+}', MimosaUserController::class . ':removePiece');
+            $p->delete('/users/{id:[0-9]+}/avatar', MimosaUserController::class . ':removeAvatar');
+            $p->post('/users/{id:[0-9]+}/reset-password', MimosaUserController::class . ':resetPassword');
         })->add(AuthMiddleware::class);
         })->add(CsrfMiddleware::class)->add(SessionMiddleware::class);
+        $app->group('/api/account', function (RouteCollectorProxy $g): void {
+            $g->get('/csrf', CustomerAuthController::class . ':csrf');
+            $g->get('/me', CustomerAuthController::class . ':me');
+            $g->post('/register', CustomerAuthController::class . ':register');
+            $g->post('/verify', CustomerAuthController::class . ':verify');
+            $g->post('/verify/resend', CustomerAuthController::class . ':resend');
+            $g->post('/login', CustomerAuthController::class . ':login');
+            $g->post('/login/code', CustomerAuthController::class . ':loginCode');
+            $g->post('/login/totp', MimosaAuthController::class . ':totp');
+            $g->post('/logout', CustomerAuthController::class . ':logout');
+            $g->post('/password/forgot', PasswordResetController::class . ':forgot');
+            $g->post('/password/reset', PasswordResetController::class . ':reset');
+            $g->group('', function (RouteCollectorProxy $p): void {
+                $p->get('/profile', CustomerAuthController::class . ':profile');
+                $p->post('/profile', CustomerAuthController::class . ':createProfile');
+                $p->patch('/profile', CustomerAuthController::class . ':updateProfile');
+                $p->post('/profile/avatar', CustomerAuthController::class . ':uploadAvatar');
+                $p->delete('/profile/avatar', CustomerAuthController::class . ':removeAvatar');
+            })->add(CustomerAuthMiddleware::class);
+        })->add(CsrfMiddleware::class)->add(SessionMiddleware::class)->add(AccountsSwitchMiddleware::class);
+        $app->get('/api/users/{username:[a-z0-9_]{3,24}}', [PublicProfileController::class, 'show'])->add(AccountsSwitchMiddleware::class);
         $app->get('/api/health', HealthController::class);
         $app->get('/api/bsky/feed', [BlueskyController::class, 'feed']);
         $app->get('/api/pieces', [PieceController::class, 'index']);

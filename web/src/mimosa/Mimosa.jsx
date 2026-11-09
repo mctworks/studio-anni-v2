@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ThemeToggle from '../ThemeToggle.jsx';
 import { isStaff, useAuth } from '../AuthContext.jsx';
 import './mimosa.css';
 import { api, ApiError, setUnauthorizedHandler } from './api.js';
-import Login from './Login.jsx';
 import PieceList from './PieceList.jsx';
+import UserDetail from './UserDetail.jsx';
+import UserList from './UserList.jsx';
 import PieceForm from './PieceForm.jsx';
 
 export default function Mimosa() {
@@ -65,23 +66,15 @@ export default function Mimosa() {
   if (phase === 'loading') return <div className="mim-wrap">Loading…</div>;
   if (phase === 'off') return <div>404 Not Found</div>;
   if (phase === 'error') return <div className="mim-wrap mim-error">Could not reach the server.</div>;
-  if (phase === 'login') {
-    return (
-      <Login
-        onLogin={(u, left) => {
-          auth.setUser(u);
-          setUser(u);
-          setCodesLeft(left ?? null);
-          setPhase(isStaff(u) ? 'ready' : 'off');
-        }}
-      />
-    );
-  }
+  if (phase === 'login') return <Navigate to="/login" replace />;
 
   return (
     <div className="mim-wrap">
       <header className="mim-header">
         <Link to="/mimosa" className="mim-brand">MIMOSA</Link>
+        <Link to="/mimosa">Pieces</Link>
+        <Link to="/mimosa/users">Users</Link>
+        <Link to="/">View site</Link>
         <span>
           {user.displayName} ({user.role})
         </span>
@@ -101,6 +94,8 @@ export default function Mimosa() {
           <Route index element={<PieceList meta={meta} />} />
           <Route path="pieces/new" element={<PieceForm meta={meta} />} />
           <Route path="pieces/:id" element={<PieceForm meta={meta} />} />
+          <Route path="users" element={<UserList />} />
+          <Route path="users/:id" element={<UserDetail me={user} />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       ) : (

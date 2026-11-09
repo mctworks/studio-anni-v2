@@ -1,5 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import archiveIconDark from './assets/archive-icon-dark-mode.svg';
+import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
+
+const GALLERY_CATEGORIES = {
+  'pets-animals': 'Animals',
+  'space-nature': 'Nature & Space',
+  people: 'People & Figures',
+  fantasy: 'Fantasy',
+  'land-cityscapes': 'Land & Cityscapes',
+};
 
 const PiecePage = () => {
   const navigate = useNavigate();
@@ -67,10 +77,21 @@ const PiecePage = () => {
 
   const price = piece.sale_price_cents ?? piece.price_cents;
   const formattedPrice = price == null ? null : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price / 100);
+  const galleryCategory = piece.categories?.find((category) => GALLERY_CATEGORIES[category.slug])
+    ?? (piece.categories?.some((category) => category.slug === 'hands') ? { slug: 'people' } : null);
+  const backPath = piece.status === 'available'
+    ? (galleryCategory ? `/gallery/${galleryCategory.slug}` : '/gallery')
+    : '/archive';
+  const backLabel = piece.status === 'available'
+    ? `Back to ${galleryCategory ? `${GALLERY_CATEGORIES[galleryCategory.slug]} Gallery` : 'Galleries'}`
+    : 'Back to Archives';
+  const backIcon = piece.status === 'available' ? galleryIconDark : archiveIconDark;
 
   return (
     <article className="container content-page piece-page">
-      <button className="page-nav-button piece-page__back" type="button" onClick={() => navigate('/')}>← Back to Studio Anni</button>
+      <button className="page-nav-button piece-page__back" type="button" onClick={() => navigate(backPath)}>
+        ← <img src={backIcon} alt="" aria-hidden="true" width="24" height="24" /> {backLabel}
+      </button>
       <div className="piece-detail">
         <div className="piece-detail__visual">
           {piece.image?.url ? <img src={piece.image.url} alt={piece.image.alt || piece.title} /> : <div className="piece-card__image--empty" />}
