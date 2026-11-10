@@ -934,22 +934,49 @@ span.bsky-pg-count {
 .gallery-page__selector {
   appearance: none;
   display: flex;
-  min-height: 5rem;
+  min-height: 12rem;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
   padding: 1rem 1.25rem;
   border: 2px solid color-mix(in srgb, var(--color-primary) 24%, transparent);
   border-radius: 7px;
-  background: color-mix(in srgb, var(--color-end) 84%, var(--color-primary));
+  --gallery-selector-color: color-mix(in srgb, var(--color-end) 84%, var(--color-primary));
+  --gallery-selector-overlay: color-mix(in srgb, var(--gallery-selector-color) 76%, transparent);
+  background-color: var(--gallery-selector-color);
+  background-image: linear-gradient(var(--gallery-selector-overlay), var(--gallery-selector-overlay)), var(--gallery-image, none);
+  background-position: center;
+  background-size: cover;
   color: var(--color-text);
   font-family: inherit;
   text-align: left;
-  font-size: 1.1rem;
-  font-weight: 700;
   text-decoration: none;
   transition: border-color 180ms ease, transform 180ms ease;
   cursor: pointer;
+}
+
+.gallery-page__selector-content {
+  display: grid;
+  gap: 0.65rem;
+  max-width: 34rem;
+}
+
+.gallery-page__selector h2 {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.55rem);
+  line-height: 1.2;
+}
+
+.gallery-page__selector-content > span {
+  font-size: 0.98rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.gallery-page__selector-arrow {
+  flex: 0 0 auto;
+  font-size: 1.3rem;
+  font-weight: 700;
 }
 
 .gallery-page__selector:hover,

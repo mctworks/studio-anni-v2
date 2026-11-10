@@ -6,12 +6,12 @@ import { useTheme } from './ThemeContext.jsx';
 import KenBurnsSlideshow from './KenBurnsSlideshow.jsx';
 
 const categories = [
-  { slug: 'pets-animals', name: 'ANIMALS' },
-  { slug: 'space-nature', name: 'NATURE & SPACE' },
-  { slug: 'people', name: 'PEOPLE & FIGURES' },
-  { slug: 'fantasy', name: 'FANTASY' },
-  { slug: 'land-cityscapes', name: 'LAND & CITYSCAPES' },
-  { slug: 'discounted', name: 'DISCOUNTED PIECES', discounted: true },
+  { slug: 'pets-animals', name: 'ANIMALS', description: 'If there\'s an animal, Anni can capture it... even if it may not exist! Everything from house cats to space squids.', backgroundPiece: '105-is-this-your-cat' },
+  { slug: 'space-nature', name: 'NATURE & SPACE', description: 'Anni\'s work covering everything from waterlillies to the depths of space.', backgroundPiece: '42-moonlit-cherry-blossom' },
+  { slug: 'people', name: 'PEOPLE & FIGURES', description: 'This collection presents Anni\'s captures of people, and sometimes the things they do.', backgroundPiece: '69-najla' },
+  { slug: 'fantasy', name: 'FANTASY', description: 'Here you\'ll find everything from the surreal to the whimsical. Maybe even a few pop culture figures here and there?', backgroundPiece: '55-soylentgreenispeople' },
+  { slug: 'land-cityscapes', name: 'LAND & CITYSCAPES', description: 'This collection of landscapes covers Anni\'s work in everything from forests to city skylines.', backgroundPiece: '150-fin-del-mundo' },
+  { slug: 'discounted', name: 'DISCOUNTED PIECES', description: 'Covers all works priced at $100 or less.', backgroundPiece: '15-ruins-at-dusk', discounted: true },
 ];
 
 const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
@@ -90,8 +90,33 @@ const GalleryPage = () => {
   const [unavailablePieces, setUnavailablePieces] = useState([]);
   const [bannerImages, setBannerImages] = useState([]);
   const [categoryBannerImages, setCategoryBannerImages] = useState([]);
+  const [categoryBackgroundImages, setCategoryBackgroundImages] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    if (categorySlug) return undefined;
+
+    const controller = new AbortController();
+    const loadCategoryBackgrounds = async () => {
+      const results = await Promise.allSettled(categories.map(async (item) => {
+        const response = await fetch(`/api/pieces/${item.backgroundPiece}`, { signal: controller.signal });
+        if (!response.ok) throw new Error('Piece image could not be loaded');
+        const result = await response.json();
+        return [item.slug, result.data?.image?.url];
+      }));
+      if (controller.signal.aborted) return;
+
+      setCategoryBackgroundImages(Object.fromEntries(
+        results
+          .filter((result) => result.status === 'fulfilled' && result.value[1])
+          .map((result) => result.value),
+      ));
+    };
+
+    loadCategoryBackgrounds();
+    return () => controller.abort();
+  }, [categorySlug]);
 
   useEffect(() => {
     if (categorySlug) return undefined;
@@ -247,9 +272,18 @@ const GalleryPage = () => {
         <p className="section-lede">Choose a collection gallery to explore available original paintings.</p>
         <nav className="gallery-page__selectors" aria-label="Gallery categories">
           {categories.map((item) => (
-            <button className="gallery-page__selector" type="button" onClick={() => navigate(`/gallery/${item.slug}`)} key={item.slug}>
-              <span>{item.name}</span>
-              <span aria-hidden="true">→</span>
+            <button
+              className="gallery-page__selector"
+              type="button"
+              onClick={() => navigate(`/gallery/${item.slug}`)}
+              key={item.slug}
+              style={{ '--gallery-image': categoryBackgroundImages[item.slug] ? `url("${categoryBackgroundImages[item.slug]}")` : 'none' }}
+            >
+              <span className="gallery-page__selector-content">
+                <h2>{item.name}</h2>
+                <span>{item.description}</span>
+              </span>
+              <span className="gallery-page__selector-arrow" aria-hidden="true">→</span>
             </button>
           ))}
         </nav>
@@ -269,7 +303,7 @@ const GalleryPage = () => {
       >
         <h1>{category.name}</h1>
       </KenBurnsSlideshow>
-      <p className="section-lede">{category.discounted ? 'Original paintings listed for $100 or less.' : 'Available original paintings in this collection.'}</p>
+      <p className="section-lede">{category.description}</p>
       <section aria-labelledby="available-heading">
         <h2 id="available-heading">Available now</h2>
         {loading ? <p className="catalog-message">Loading available works…</p> : error ? (

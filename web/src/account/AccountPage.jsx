@@ -17,6 +17,35 @@ const avatarMessages = {
   unsupported_type: 'Use a JPEG or PNG image.',
   dimensions_too_large: 'That image is too large (dimensions).',
   too_many_attempts: 'Too many uploads. Try again later.',
+  image_processing_failed: 'That file could not be read as an image. Try a JPEG or PNG.',
+};
+
+const loadBitmap = async (file) => {
+  try {
+    return await createImageBitmap(file, { imageOrientation: 'from-image' });
+  } catch {
+    return createImageBitmap(file);
+  }
+};
+
+const shrink = async (file) => {
+  try {
+    const bmp = await loadBitmap(file);
+    const side = Math.min(bmp.width, bmp.height);
+    const size = Math.min(512, side);
+    const canvas = document.createElement('canvas');
+    canvas.width = size;
+    canvas.height = size;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, size, size);
+    ctx.drawImage(bmp, (bmp.width - side) / 2, (bmp.height - side) / 2, side, side, 0, 0, size, size);
+    bmp.close?.();
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/jpeg', 0.88));
+    return blob ? new File([blob], 'avatar.jpg', { type: 'image/jpeg' }) : file;
+  } catch {
+    return file;
+  }
 };
 
 const AvatarEditor = ({ profile, onChange }) => {
@@ -27,13 +56,18 @@ const AvatarEditor = ({ profile, onChange }) => {
     const file = e.target.files?.[0];
     e.target.value = '';
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) return setError(avatarMessages.too_large);
     setError('');
     setBusy(true);
-    const r = await account.uploadAvatar(file);
+    const upload = await shrink(file);
+    if (upload.size > 5 * 1024 * 1024) {
+      setBusy(false);
+      return setError(avatarMessages.too_large);
+    }
+    const r = await account.uploadAvatar(upload);
     setBusy(false);
-    if (r.ok) onChange(r.data.profile);
-    else setError(avatarMessages[r.data?.error] ?? 'Could not save that image.');
+    if (r.ok) return onChange(r.data.profile);
+    const code = r.data?.error;
+    setError(avatarMessages[code] ?? `Could not save that image (${code ?? `HTTP ${r.status}`}).`);
   };
 
   const remove = async () => {
@@ -49,7 +83,7 @@ const AvatarEditor = ({ profile, onChange }) => {
       <div className="account-avatar-actions">
         <label className="account-link">
           {profile.avatar ? 'Change picture' : 'Add a picture'}
-          <input type="file" accept="image/jpeg,image/png" onChange={pick} disabled={busy} hidden />
+          <input type="file" accept="image/*" onChange={pick} disabled={busy} hidden />
         </label>
         {profile.avatar && <button className="account-link" type="button" onClick={remove} disabled={busy}>Remove picture</button>}
         {error && <small className="account-error" role="alert">{error}</small>}
