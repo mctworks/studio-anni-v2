@@ -1,11 +1,13 @@
 import React, { useState, useCallback } from 'react';
 import { stack as StackMenu } from 'react-burger-menu';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from './AuthContext.jsx';
 import { useTheme } from './ThemeContext.jsx';
 import shopbagDark from './assets/shopbag-icon-dark-mode.svg';
 import shopbagLight from './assets/shopbag-icon-light-mode.svg';
+import saLogoDark from './assets/sa-logo-v2-dark-mode.svg';
+import saLogoLight from './assets/sa-logo-v2.svg';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -20,6 +22,16 @@ const NavBar = () => {
   return (
     <>
       <nav className="global-nav">
+        <div className="nav-left-controls">
+          <Link to="/" className="nav-brand" aria-label="Studio Anni home">
+            <img src={isDarkMode ? saLogoDark : saLogoLight} alt="Studio Anni" />
+          </Link>
+          {user ? (
+            <Link to="/account" className="nav-account-link">👤{user.username || user.displayName || 'Account'}</Link>
+          ) : (
+            <Link to="/login" className="nav-account-link">Sign In</Link>
+          )}
+        </div>
         <div className="nav-right-controls">
           {staff && (
             <button type="button" className="nav-mimosa" onClick={() => navigate('/mimosa')}>MIMOSA</button>
@@ -59,7 +71,7 @@ const NavBar = () => {
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/'); }}>Home</button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/gallery'); }}>Galleries</button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/archive'); }}>Past Works</button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/#'); }}>Commissions</button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/commissions'); }}>Commissions</button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/about'); }}>About</button>
           {staff && (
             <button type="button" onClick={() => { setMenuOpen(false); navigate('/mimosa'); }}>MIMOSA</button>
