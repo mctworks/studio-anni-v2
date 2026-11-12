@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
-import galleryIconLight from './assets/galleries-icon-light-mode.svg';
 import { useTheme } from './ThemeContext.jsx';
 import KenBurnsSlideshow from './KenBurnsSlideshow.jsx';
 
@@ -267,7 +266,7 @@ const GalleryPage = () => {
           className="gallery-page__banner"
           ariaLabel="Featured paintings from the galleries"
         >
-          <h1><img src={isDarkMode ? galleryIconDark : galleryIconLight} alt="Galleries" width="25%" height="25%" /> GALLERIES</h1>
+          <h1><img src={galleryIconDark} alt="Galleries" width="25%" height="25%" /> GALLERIES</h1>
         </KenBurnsSlideshow>
         <p className="section-lede">Choose a collection gallery to explore available original paintings.</p>
         <nav className="gallery-page__selectors" aria-label="Gallery categories">

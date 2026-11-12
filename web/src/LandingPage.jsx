@@ -9,17 +9,10 @@ import galleryIconLight from './assets/galleries-icon-light-mode.svg';
 import { useTheme } from './ThemeContext.jsx';
 import BlueskyFeed from './BlueskyFeed.jsx';
 import displayLocations from './displayLocations.json';
+import { availabilityCopy } from './commissionStatus.js';
 
 const locationImages = import.meta.glob('./assets/images/*', { eager: true, query: '?url', import: 'default' });
 
-const commissionAvailability = 'unknown';
-
-const availabilityCopy = {
-  open: { label: 'Accepting commissions', tone: 'open' },
-  delays: { label: 'Accepting commissions · current delays', tone: 'delays' },
-  closed: { label: 'Commissions temporarily closed', tone: 'closed' },
-  unknown: { label: 'Commission availability to be announced', tone: 'unknown' },
-};
 
 const piecePath = (piece) => `/pieces/${piece.id}-${piece.slug}`;
 
@@ -55,6 +48,7 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const { isDarkMode } = useTheme();
   const [health, setHealth] = useState('checking');
+  const [commissionAvailability, setCommissionAvailability] = useState('unknown');
   const [commissions, setCommissions] = useState([]);
   const [availablePieces, setAvailablePieces] = useState([]);
   const [archivePieces, setArchivePieces] = useState([]);
@@ -72,6 +66,11 @@ const LandingPage = () => {
       .catch(() => setHealth('API unreachable'));
 
     const controller = new AbortController();
+    fetch('/api/commissions/info', { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error('Commission info failed'))))
+      .then((d) => setCommissionAvailability(d.availability))
+      .catch(() => {});
+
     const fetchPieces = async (query) => {
       const response = await fetch(`/api/pieces?${query}`, { signal: controller.signal });
       if (!response.ok) throw new Error('Catalog request failed');
@@ -147,6 +146,7 @@ const LandingPage = () => {
         <p>
           Want to see your fur babies or a special someone captured on canvas in immaculate detail? Since she expanded her work in capturing animals and individuals in 2018, Anni has been commissioned to capture a vast number of her clients' loved ones, be it a beloved household pet, close friends, family members, and sometimes even the occaisional cat dressed as a human!
         </p>
+        <p><button type="button" className="page-nav-button" onClick={() => navigate('/commissions')}>Prices &amp; how to commission →</button></p>
         <h3>Recent Commissions</h3>
         {catalogLoading ? <p className="catalog-message">Loading recent commissions…</p> : commissions.length > 0 ? (
           <div className="piece-grid piece-grid--three">

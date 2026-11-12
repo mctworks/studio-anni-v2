@@ -123,7 +123,6 @@ final class MimosaImageController
         $committed = false;
 
         try {
-            $this->images->requireGd();
             $this->images->ensureDir($dir);
             $this->images->ensureDir($this->images->publicDir());
 
@@ -139,19 +138,28 @@ final class MimosaImageController
                 throw new ImageException('write_failed', 500);
             }
 
-            $img = $this->images->shrink($this->images->load($original, $info['type']));
-
             $baseName = $token . '-base.jpg';
-            $made[] = $dir . '/' . $baseName;
-            $this->images->saveJpeg($img, $dir . '/' . $baseName, self::BASE_QUALITY);
-
+            $basePath = $dir . '/' . $baseName;
+            $made[] = $basePath;
             $publicName = 'p' . $pieceId . '-' . $token . '.jpg';
             $public = $this->images->publicDir() . '/' . $publicName;
             $made[] = $public;
-            if ($watermark !== null) {
-                $this->images->saveJpeg($this->images->burn($img, $watermark), $public);
+
+            if ($this->images->hasGd()) {
+                $img = $this->images->shrink($this->images->load($original, $info['type']));
+                $this->images->saveJpeg($img, $basePath, self::BASE_QUALITY);
+                if ($watermark !== null) {
+                    $this->images->saveJpeg($this->images->burn($img, $watermark), $public);
+                } else {
+                    $this->images->saveJpeg($img, $public);
+                }
             } else {
-                $this->images->saveJpeg($img, $public);
+                $this->images->normalizeJpeg($original, $basePath, self::BASE_QUALITY);
+                if ($watermark !== null) {
+                    $this->images->watermarkJpeg($basePath, $public, $watermark);
+                } else {
+                    $this->images->publish($basePath, $public);
+                }
             }
 
             $range = $this->run('SELECT MIN(sort_order) AS lo, MAX(sort_order) AS hi FROM piece_images WHERE piece_id = ?', [$pieceId])->fetch();

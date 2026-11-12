@@ -105,6 +105,10 @@ h1, h2, h3, h4, h5, h6 {
   color: inherit;
 }
 
+a {
+  color: var(--color-secondary);
+}
+
 .bm-menu-wrap {
   background-color: var(--color-bg) !important;
   overflow: hidden !important;
@@ -170,6 +174,64 @@ h1, h2, h3, h4, h5, h6 {
   backdrop-filter: blur(1px);
 }
 
+.nav-left-controls {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  height: 70px;
+  align-items: center;
+  padding: 0 5px;
+  pointer-events: auto;
+}
+
+@media (min-width: 425px) {
+  .nav-left-controls {
+    padding: 0 10px;
+    gap: 10px;
+  }
+}
+
+.nav-brand {
+  display: flex;
+  width: 90px;
+  height: 90px;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-brand img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.nav-account-link {
+    color: var(--color-text);
+    white-space: nowrap;
+    font-weight: 600;
+    text-decoration: none;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 320px) {
+  .nav-account-link {
+    font-size: 9px;
+  }
+}
+
+@media (min-width: 425px) {
+  .nav-account-link {
+    font-size: 12px;
+  }
+}
+
+.nav-account-link:hover {
+  opacity: 0.75;
+}
+
 .nav-right-controls {
   position: absolute;
   top: 0;
@@ -177,8 +239,8 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 15px 20px;
-  gap: 15px;
+  padding: 15px 10px;
+  gap: 10px;
   pointer-events: auto;
 }
 
@@ -830,7 +892,7 @@ span.bsky-pg-count {
 .gallery-page > .eyebrow,
 .piece-detail .eyebrow {
   margin: 1.75rem 0 0.4rem;
-  color: var(--color-primary);
+  color: mix(var(--color-primary) 75%, var(--color-end));
   font-size: 0.85rem;
   font-weight: 700;
   letter-spacing: 0.12em;

@@ -8,6 +8,9 @@ import PieceList from './PieceList.jsx';
 import UserDetail from './UserDetail.jsx';
 import UserList from './UserList.jsx';
 import PieceForm from './PieceForm.jsx';
+import CommissionsHome from './CommissionsHome.jsx';
+import CommissionDetail from './CommissionDetail.jsx';
+import PricingEditor from './PricingEditor.jsx';
 
 export default function Mimosa() {
   const auth = useAuth();
@@ -72,7 +75,9 @@ export default function Mimosa() {
     <div className="mim-wrap">
       <header className="mim-header">
         <Link to="/mimosa" className="mim-brand">MIMOSA</Link>
-        <Link to="/mimosa">Pieces</Link>
+        <Link to="/mimosa">Home</Link>
+        <Link to="/mimosa/pricing">Pricing</Link>
+        <Link to="/mimosa/pieces">Pieces</Link>
         <Link to="/mimosa/users">Users</Link>
         <Link to="/">View site</Link>
         <span>
@@ -91,7 +96,10 @@ export default function Mimosa() {
 
       {meta ? (
         <Routes>
-          <Route index element={<PieceList meta={meta} />} />
+          <Route index element={<CommissionsHome />} />
+          <Route path="commissions/:id" element={<CommissionDetail />} />
+          <Route path="pricing" element={<PricingEditor />} />
+          <Route path="pieces" element={<PieceList meta={meta} />} />
           <Route path="pieces/new" element={<PieceForm meta={meta} />} />
           <Route path="pieces/:id" element={<PieceForm meta={meta} />} />
           <Route path="users" element={<UserList />} />

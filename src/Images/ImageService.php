@@ -155,6 +155,23 @@ final class ImageService
         }
     }
 
+    public function normalizeJpeg(string $source, string $destination, int $quality): void
+    {
+        $tmp = $destination . '.' . bin2hex(random_bytes(4)) . '.tmp.jpg';
+        try {
+            $this->runGraphicsMagick([
+                'convert', $source . '[0]', '-auto-orient', '-background', 'white', '-flatten',
+                '-thumbnail', self::MAX_SIDE . 'x' . self::MAX_SIDE . '>', '-strip',
+                '-quality', (string) max(60, min(95, $quality)), 'JPEG:' . $tmp,
+            ]);
+            if (! rename($tmp, $destination)) {
+                throw new ImageException('write_failed', 500);
+            }
+        } finally {
+            @unlink($tmp);
+        }
+    }
+
     public function load(string $path, int $type): \GdImage
     {
         $img = $type === IMAGETYPE_PNG ? @imagecreatefrompng($path) : @imagecreatefromjpeg($path);

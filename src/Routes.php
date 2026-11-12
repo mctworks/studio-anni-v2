@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Http\CommissionController;
+use App\Http\ContactController;
 use App\Http\CustomerAuthController;
 use App\Http\HealthController;
 use App\Http\BlueskyController;
@@ -17,6 +19,8 @@ use App\Http\Middleware\CsrfMiddleware;
 use App\Http\Middleware\SessionMiddleware;
 use App\Http\MimosaAuthController;
 use App\Http\MimosaPieceController;
+use App\Http\MimosaCommissionController;
+use App\Http\MimosaHealthController;
 use App\Http\MimosaImageController;
 use App\Http\MimosaUserController;
 use App\Http\PasswordResetController;
@@ -35,6 +39,11 @@ final class Routes
             $g->get('/me', MimosaAuthController::class . ':me')->add(AuthMiddleware::class);
             $g->group('', function (RouteCollectorProxy $p): void {
             $p->get('/meta', MimosaPieceController::class . ':meta');
+            $p->get('/health', MimosaHealthController::class);
+            $p->get('/commissions', MimosaCommissionController::class . ':overview');
+            $p->get('/commissions/pricing', MimosaCommissionController::class . ':pricing');
+            $p->put('/commissions/pricing', MimosaCommissionController::class . ':savePricing');
+            $p->put('/commissions/availability', MimosaCommissionController::class . ':saveAvailability');
             $p->get('/pieces', MimosaPieceController::class . ':index');
             $p->post('/pieces', MimosaPieceController::class . ':create');
             $p->get('/pieces/{id:[0-9]+}', MimosaPieceController::class . ':show');
@@ -80,6 +89,9 @@ final class Routes
         })->add(CsrfMiddleware::class)->add(SessionMiddleware::class)->add(AccountsSwitchMiddleware::class);
         $app->get('/api/users/{username:[a-z0-9_]{3,24}}', [PublicProfileController::class, 'show'])->add(AccountsSwitchMiddleware::class);
         $app->get('/api/health', HealthController::class);
+        $app->get('/api/contact/token', [ContactController::class, 'token']);
+        $app->post('/api/contact', [ContactController::class, 'send']);
+        $app->get('/api/commissions/info', [CommissionController::class, 'info']);
         $app->get('/api/bsky/feed', [BlueskyController::class, 'feed']);
         $app->get('/api/pieces', [PieceController::class, 'index']);
         $app->get('/api/pieces/{id:[0-9]+}-{slug:[a-z0-9-]+}', [PieceController::class, 'show']);

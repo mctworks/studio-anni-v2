@@ -8,7 +8,7 @@ const EMPTY = {
   title: '',
   slug: '',
   description: '',
-  medium: '',
+  medium: 'Acrylic on Canvas',
   canvas_size_id: '',
   price: '',
   sale_price: '',
@@ -227,7 +227,7 @@ export default function PieceForm({ meta }) {
     return (
       <section>
         <p className="mim-error">{loadError}</p>
-        <Link to="/mimosa">Back to pieces</Link>
+        <Link to="/mimosa/pieces">Back to pieces</Link>
       </section>
     );
   }
@@ -249,7 +249,7 @@ export default function PieceForm({ meta }) {
     <section>
       <div className="mim-bar">
         <h2>{isNew ? 'New piece' : `${piece.title} #${piece.id}`}</h2>
-        <Link to="/mimosa">Back to pieces</Link>
+        <Link to="/mimosa/pieces">Back to pieces</Link>
       </div>
 
       {deleted && (

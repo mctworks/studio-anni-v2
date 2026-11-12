@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import archiveIconDark from './assets/archive-icon-dark-mode.svg';
 import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
 
@@ -104,7 +104,7 @@ const PiecePage = () => {
           {piece.status_note && <p className="piece-detail__note">{piece.status_note}</p>}
           {piece.description && <p className="piece-detail__description">{piece.description}</p>}
           {piece.origin === 'commission' && (
-            <p className="piece-detail__commission">Interested in a portrait commission? <span>TODO: link to the Commissions page once it exists.</span></p>
+            <p className="piece-detail__commission">Interested in a portrait commission? <Link to="/commissions">See pricing and how it works.</Link></p>
           )}
           {piece.images?.length > 1 && (
             <div className="piece-detail__angles" aria-label="Additional views">

@@ -4,6 +4,7 @@ import LandingPage from './LandingPage.jsx';
 import GalleryPage from './GalleryPage.jsx';
 import ArchivePage from './ArchivePage.jsx';
 import PiecePage from './PiecePage.jsx';
+import CommissionsPage from './CommissionsPage.jsx';
 import AccountPage from './account/AccountPage.jsx';
 import PublicProfilePage from './account/PublicProfilePage.jsx';
 import LoginPage from './LoginPage.jsx';
@@ -36,6 +37,7 @@ function Site() {
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/gallery/:categorySlug" element={<GalleryPage />} />
             <Route path="/archive" element={<ArchivePage />} />
+            <Route path="/commissions" element={<CommissionsPage />} />
             <Route path="/pieces/:pieceKey" element={<PiecePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/account" element={<AccountPage />} />

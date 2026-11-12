@@ -1,0 +1,57 @@
+.commissions-quote {
+  margin: 1rem 0 1.5rem;
+  padding: 0.25rem 0 0.25rem 1.25rem;
+  border-left: 3px solid var(--color-primary);
+  font-style: italic;
+}
+
+.commissions-quote footer {
+  margin-top: 0.5rem;
+  font-style: normal;
+  font-weight: 700;
+}
+
+.commissions-prices {
+  width: 100%;
+  max-width: 34rem;
+  border-collapse: collapse;
+  margin: 0 0 0.75rem;
+}
+
+.commissions-prices caption {
+  text-align: left;
+  font-weight: 700;
+  padding-bottom: 0.4rem;
+}
+
+.commissions-prices th,
+.commissions-prices td {
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent);
+}
+
+.commissions-prices__ship {
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+.commissions-note {
+  opacity: 0.85;
+}
+
+.commissions-steps {
+  display: grid;
+  gap: 0.6rem;
+  padding-left: 1.25rem;
+}
+
+.commissions-extras {
+  display: grid;
+  gap: 0.4rem;
+  padding-left: 1.25rem;
+}
+
+.commissions-prices {
+  max-width: 40rem;
+}
