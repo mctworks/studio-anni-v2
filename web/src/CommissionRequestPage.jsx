@@ -6,7 +6,7 @@ import { PickupNotice } from './PickupNotice.jsx';
 import { availabilityCopy, money } from './commissionStatus.js';
 import './CommissionRequestPage.css';
 
-const MAX_FILES = 5;
+const MAX_FILES = 4;
 const MAX_TOTAL = 25 * 1024 * 1024;
 const TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
@@ -71,7 +71,7 @@ function Dropzone({ files, setFiles, error }) {
         <p>Drag and drop your images here, or</p>
         <button type="button" className="page-nav-button" onClick={() => input.current?.click()} aria-describedby="crf-photos-label">Choose images</button>
         <input ref={input} type="file" accept=".jpg,.jpeg,.gif,.png,image/jpeg,image/png,image/gif" multiple hidden onChange={(e) => { add([...e.target.files]); e.target.value = ''; }} />
-        <small>2 to 5 clear photos work best. {MAX_FILES} images maximum, 25 MB total. JPG, GIF or PNG.</small>
+        <small>2 to 4 clear photos work best. {MAX_FILES} images maximum, 25 MB total. JPG, GIF or PNG.</small>
       </div>
       {files.length > 0 && (
         <>
