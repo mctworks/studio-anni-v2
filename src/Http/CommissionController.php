@@ -21,6 +21,7 @@ final class CommissionController
             'deposit_percent' => $this->pricing->depositPercent(),
             'fees' => $this->pricing->fees(),
             'prices' => $this->pricing->publicTable(),
+            'sizes' => array_values(array_filter($this->pricing->table(), static fn (array $r): bool => $r['pet_cents'] !== null || $r['human_cents'] !== null)),
         ]);
 
         return $out->withHeader('Cache-Control', 'public, max-age=60');

@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { account } from './api.js';
 import AuthFlow from './AuthFlow.jsx';
 import Avatar from './Avatar.jsx';
+import MyCommissions from './MyCommissions.jsx';
 import { useAuth } from '../AuthContext.jsx';
 import './account.css';
 
@@ -232,6 +233,7 @@ export default function AccountPage() {
   return (
     <div className="container account-page">
       {staffBar}
+      <MyCommissions />
       <Settings
         profile={profile}
         onChange={setProfile}

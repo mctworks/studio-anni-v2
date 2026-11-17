@@ -8,6 +8,7 @@ use App\Auth\AuditLog;
 use App\Auth\ClientIp;
 use App\Auth\RateLimiter;
 use App\Commissions\Pricing;
+use App\Commissions\Workflow;
 use App\Config;
 use App\Images\ImageService;
 use App\Mail\Mailer;
@@ -18,10 +19,10 @@ use Psr\Http\Message\UploadedFileInterface;
 final class CommissionRequestController
 {
     public const TERMS_VERSION = 'draft-1';
-    private const MAX_FILES = 6;
-    private const MAX_FILE_BYTES = 10485760;
+    private const MAX_FILES = 4;
+    private const MAX_TOTAL_BYTES = 26214400;
     private const MAX_SUBJECTS = 10;
-    private const MIMES = ['image/jpeg' => 'jpg', 'image/png' => 'png'];
+    private const MIMES = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/gif' => 'gif'];
 
     public function __construct(
         private readonly \PDO $pdo,
@@ -31,6 +32,7 @@ final class CommissionRequestController
         private readonly ImageService $images,
         private readonly Mailer $mailer,
         private readonly Config $config,
+        private readonly Workflow $workflow,
     ) {
     }
 
@@ -52,6 +54,65 @@ final class CommissionRequestController
             'created_at' => (string) $r['created_at'],
             'size' => (string) $r['size'],
         ], $st->fetchAll())]);
+    }
+
+    public function show(Request $request, Response $response, array $args): Response
+    {
+        $id = (int) $args['id'];
+        $userId = (int) $request->getAttribute('user')['id'];
+        $st = $this->pdo->prepare(
+            'SELECT c.id, c.subject_type, c.status, c.pet_count, c.person_count, c.description, c.delivery, c.postal_code, c.quoted_cents, c.created_at, cs.label AS size
+             FROM commissions c JOIN canvas_sizes cs ON cs.id = c.canvas_size_id WHERE c.id = ? AND c.user_id = ?'
+        );
+        $st->execute([$id, $userId]);
+        $c = $st->fetch();
+        if ($c === false) {
+            return $this->err($response, 404, 'not_found');
+        }
+        $ev = $this->pdo->prepare('SELECT kind, to_status, note, created_at FROM commission_events WHERE commission_id = ? ORDER BY id');
+        $ev->execute([$id]);
+        $files = $this->pdo->prepare('SELECT COUNT(*) FROM commission_files WHERE commission_id = ?');
+        $files->execute([$id]);
+
+        return Json::write($response, ['commission' => [
+            'id' => (int) $c['id'],
+            'subject_type' => (string) $c['subject_type'],
+            'status' => (string) $c['status'],
+            'pet_count' => (int) $c['pet_count'],
+            'person_count' => (int) $c['person_count'],
+            'description' => (string) $c['description'],
+            'delivery' => (string) $c['delivery'],
+            'postal_code' => $c['postal_code'],
+            'quoted_cents' => (int) $c['quoted_cents'],
+            'created_at' => (string) $c['created_at'],
+            'size' => (string) $c['size'],
+            'photo_count' => (int) $files->fetchColumn(),
+            'can_reply' => $c['status'] === 'info_requested',
+            'events' => array_map(static fn (array $e): array => [
+                'kind' => (string) $e['kind'],
+                'status' => $e['to_status'],
+                'note' => $e['note'],
+                'created_at' => (string) $e['created_at'],
+            ], $ev->fetchAll()),
+        ]]);
+    }
+
+    public function reply(Request $request, Response $response, array $args): Response
+    {
+        $userId = (int) $request->getAttribute('user')['id'];
+        $body = $request->getParsedBody();
+        $message = is_array($body) && is_string($body['message'] ?? null) ? $body['message'] : '';
+        if ($this->limits->tooMany('commission_reply', (string) $userId, 10, 3600)) {
+            return $this->err($response, 429, 'rate_limited');
+        }
+        $this->limits->hit('commission_reply', (string) $userId);
+
+        $error = $this->workflow->reply((int) $args['id'], $userId, $message);
+        if ($error !== null) {
+            return $this->err($response, $error === 'save_failed' ? 500 : 422, $error);
+        }
+
+        return Json::write($response, ['ok' => true]);
     }
 
     public function create(Request $request, Response $response): Response
@@ -126,15 +187,16 @@ final class CommissionRequestController
         } elseif (count($files) > self::MAX_FILES) {
             $fields['photos'] = 'too_many';
         } else {
+            $total = 0;
             foreach ($files as $file) {
                 if ($file->getError() !== UPLOAD_ERR_OK || ($file->getSize() ?? 0) < 1) {
                     $fields['photos'] = in_array($file->getError(), [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE], true) ? 'too_large' : 'upload_failed';
                     break;
                 }
-                if ($file->getSize() > self::MAX_FILE_BYTES) {
-                    $fields['photos'] = 'too_large';
-                    break;
-                }
+                $total += (int) $file->getSize();
+            }
+            if (! isset($fields['photos']) && $total > self::MAX_TOTAL_BYTES) {
+                $fields['photos'] = 'too_large';
             }
         }
 
@@ -165,6 +227,7 @@ final class CommissionRequestController
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'
             )->execute([$userId, $subject, $sizeId, $pets, $people, $description, $delivery, $zip === '' ? null : $zip, 'submitted', $quote['total_cents'], self::TERMS_VERSION, $now, ClientIp::pack($ip), $now, $now]);
             $id = (int) $this->pdo->lastInsertId();
+            $this->workflow->open($id, $userId, (int) $quote['total_cents'], $now);
 
             $dir = $this->config->root . '/storage/uploads/commissions/' . $id;
             if (! is_dir($dir) && ! mkdir($dir, 0750, true) && ! is_dir($dir)) {

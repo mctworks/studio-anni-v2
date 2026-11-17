@@ -43,6 +43,10 @@ export const account = {
     return request('/profile/avatar', 'POST', f);
   },
   removeAvatar: () => request('/profile/avatar', 'DELETE'),
+  commissions: () => request('/commissions', 'GET'),
+  commission: (id) => request(`/commissions/${id}`, 'GET'),
+  requestCommission: (formData) => request('/commissions', 'POST', formData),
+  replyCommission: (id, message) => request(`/commissions/${id}/reply`, 'POST', { message }),
   createProfile: (fields) => request('/profile', 'POST', fields),
   updateProfile: (fields) => request('/profile', 'PATCH', fields),
   register: (fields) => request('/register', 'POST', fields),

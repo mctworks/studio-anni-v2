@@ -146,7 +146,7 @@ export default function CommissionsHome() {
               <span><strong>{data.counts.awaiting_balance}</strong> awaiting balance</span>
             </p>
             {data.recent.length === 0 ? (
-              <p className="mim-note">No commission requests yet. The request form is not built; requests will appear here.</p>
+              <p className="mim-note">No commission requests yet. Requests will appear here.</p>
             ) : (
               <table className="mim-table">
                 <thead>
@@ -155,7 +155,7 @@ export default function CommissionsHome() {
                 <tbody>
                   {data.recent.map((c) => (
                     <tr key={c.id}>
-                      <td>{c.id}</td>
+                      <td><Link to={`/mimosa/commissions/${c.id}`}>{c.id}</Link></td>
                       <td>{c.customer}</td>
                       <td>{c.subject_type === 'pet' ? 'Pet' : 'Human'}</td>
                       <td>{c.size}</td>

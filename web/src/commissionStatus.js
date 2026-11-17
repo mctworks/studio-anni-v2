@@ -6,3 +6,19 @@ export const availabilityCopy = {
 };
 
 export const money = (cents) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format((Number(cents) || 0) / 100);
+
+export const customerStatus = {
+  submitted: 'Received',
+  info_requested: 'Anni has a question',
+  customer_replied: 'Reply sent',
+  quoted: 'Approved, awaiting payment',
+  deposit_paid: 'Payment received',
+  in_progress: 'In progress',
+  completed: 'Finished',
+  awaiting_balance: 'Balance due',
+  shipped: 'Shipped',
+  denied: 'Not a fit',
+  abandoned: 'Closed',
+  stopped: 'Stopped',
+  refunded: 'Refunded',
+};

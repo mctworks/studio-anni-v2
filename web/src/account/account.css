@@ -89,3 +89,14 @@
   align-items: center;
   gap: 1rem;
 }
+
+.account-commissions { margin-bottom: 2rem; overflow-x: auto; }
+.account-table { width: 100%; max-width: 44rem; border-collapse: collapse; }
+.account-table th, .account-table td { text-align: left; padding: 0.4rem 0.5rem; border-bottom: 1px solid color-mix(in srgb, var(--color-text) 15%, transparent); }
+.account-details { display: grid; grid-template-columns: max-content 1fr; gap: 0.35rem 1rem; }
+.account-details dt { font-weight: 700; }
+.account-details dd { margin: 0; }
+.account-pre { white-space: pre-wrap; }
+.account-history { display: grid; gap: 0.75rem; padding-left: 1.25rem; }
+.account-history p { margin: 0.25rem 0 0; }
+.account-form textarea { font: inherit; color: inherit; background: var(--color-bg); padding: 0.6rem 0.75rem; border: 2px solid color-mix(in srgb, var(--color-primary) 40%, transparent); border-radius: 7px; }

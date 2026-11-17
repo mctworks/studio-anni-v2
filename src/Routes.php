@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App;
 
 use App\Http\CommissionController;
+use App\Http\CommissionRequestController;
 use App\Http\ContactController;
 use App\Http\CustomerAuthController;
 use App\Http\HealthController;
@@ -42,6 +43,10 @@ final class Routes
             $p->get('/health', MimosaHealthController::class);
             $p->get('/commissions', MimosaCommissionController::class . ':overview');
             $p->get('/commissions/pricing', MimosaCommissionController::class . ':pricing');
+            $p->get('/commissions/{id:[0-9]+}', MimosaCommissionController::class . ':show');
+            $p->get('/commissions/{id:[0-9]+}/files/{fid:[0-9]+}', MimosaCommissionController::class . ':file');
+            $p->post('/commissions/{id:[0-9]+}/status', MimosaCommissionController::class . ':setStatus');
+            $p->get('/orders', MimosaCommissionController::class . ':orders');
             $p->put('/commissions/pricing', MimosaCommissionController::class . ':savePricing');
             $p->put('/commissions/availability', MimosaCommissionController::class . ':saveAvailability');
             $p->get('/pieces', MimosaPieceController::class . ':index');
@@ -85,6 +90,10 @@ final class Routes
                 $p->patch('/profile', CustomerAuthController::class . ':updateProfile');
                 $p->post('/profile/avatar', CustomerAuthController::class . ':uploadAvatar');
                 $p->delete('/profile/avatar', CustomerAuthController::class . ':removeAvatar');
+                $p->get('/commissions', CommissionRequestController::class . ':list');
+                $p->post('/commissions', CommissionRequestController::class . ':create');
+                $p->get('/commissions/{id:[0-9]+}', CommissionRequestController::class . ':show');
+                $p->post('/commissions/{id:[0-9]+}/reply', CommissionRequestController::class . ':reply');
             })->add(CustomerAuthMiddleware::class);
         })->add(CsrfMiddleware::class)->add(SessionMiddleware::class)->add(AccountsSwitchMiddleware::class);
         $app->get('/api/users/{username:[a-z0-9_]{3,24}}', [PublicProfileController::class, 'show'])->add(AccountsSwitchMiddleware::class);

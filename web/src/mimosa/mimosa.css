@@ -407,3 +407,6 @@ button.mim-link {
   max-height: 220px;
   object-fit: cover;
 }
+
+.mim-history { display: grid; gap: 0.75rem; padding-left: 1.25rem; }
+.mim-history p { margin: 0.25rem 0 0; }

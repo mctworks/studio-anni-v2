@@ -1,0 +1,29 @@
+.crf form { max-width: 40rem; }
+.crf fieldset { border: 0; padding: 0; margin: 0 0 1.5rem; display: grid; gap: 1rem; }
+.crf legend { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem; }
+.crf-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr)); gap: 1rem; }
+.crf-field { display: grid; gap: 0.35rem; align-content: start; }
+.crf-label { font-weight: 700; }
+.crf-field input, .crf-field select, .crf-field textarea {
+  font: inherit; color: inherit; background: transparent; padding: 0.5rem 0.65rem;
+  border: 1px solid color-mix(in srgb, var(--color-text) 35%, transparent); border-radius: 4px;
+}
+.crf-field select option { color: initial; }
+.crf-check { display: flex; gap: 0.5rem; align-items: center; }
+.crf-note, .crf small { color: color-mix(in srgb, var(--color-text) 72%, transparent); }
+.crf-quote { margin: 0; }
+.crf-error { color: #b3261e; margin: 0; }
+.dark-mode .crf-error { color: #ff8a80; }
+.crf-drop {
+  display: grid; justify-items: center; gap: 0.5rem; padding: 1.5rem; text-align: center;
+  border: 2px dashed color-mix(in srgb, var(--color-text) 40%, transparent); border-radius: 8px;
+}
+.crf-drop p { margin: 0; }
+.crf-drop--over { border-color: var(--color-primary); background: color-mix(in srgb, var(--color-primary) 10%, transparent); }
+.crf-thumbs { display: flex; flex-wrap: wrap; gap: 1rem; margin: 0.5rem 0; padding: 0; list-style: none; }
+.crf-thumbs li { display: grid; gap: 0.25rem; max-width: 140px; font-size: 0.85rem; overflow-wrap: anywhere; }
+.crf-thumbs img { width: 140px; height: 140px; object-fit: cover; border-radius: 4px; }
+.crf button:disabled { opacity: 0.5; cursor: default; }
+.crf-terms { border: 1px solid color-mix(in srgb, var(--color-text) 25%, transparent); border-radius: 4px; padding: 0.5rem 0.75rem; }
+.crf-terms summary { cursor: pointer; font-weight: 700; }
+.crf-terms ol { display: grid; gap: 0.5rem; padding-left: 1.25rem; }

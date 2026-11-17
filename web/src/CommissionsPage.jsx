@@ -28,7 +28,7 @@ function PriceTable({ prices }) {
     <table className="commissions-prices">
       <caption>Prices by canvas size, one subject, shipping not included</caption>
       <thead>
-        <tr><th scope="col">Size</th><th scope="col">Pet portrait</th><th scope="col">Portrait of a person</th></tr>
+        <tr><th scope="col">Size</th><th scope="col">Pet/Animal</th><th scope="col">Human Subject</th></tr>
       </thead>
       <tbody>
         {prices.map((row) => (
@@ -144,7 +144,7 @@ export default function CommissionsPage() {
           <li><strong>Anni reviews.</strong> She may reply with questions, approve the commission, or (although incredibly rarely the case) let you know it is not a fit.</li>
           <li><strong>Pay.</strong> Pay in full, or{info ? ` put down a ${info.deposit_percent}%` : ' put down a'} deposit to begin. Shipping is quoted separately.</li>
         </ol>
-        <p className="commissions-note">The request form is not open yet.</p>
+        <p><Link className="page-nav-button" to="/commissions/request">Portrait Request Form</Link></p>
       </section>
 
       <ContactForm source="commissions" heading="Have a question first?" intro="Have questions about pricing, sizes, photos or timing? Anni will be more than happy to answer any questions. For a business or organization commission, contact us here instead of using the request form." />
