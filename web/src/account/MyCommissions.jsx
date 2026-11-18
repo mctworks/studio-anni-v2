@@ -20,9 +20,9 @@ export default function MyCommissions() {
 
   return (
     <section className="account-commissions">
-      <h2>My commissions</h2>
+      <h2>Your Commissions</h2>
       {rows.length === 0 ? (
-        <p className="account-note">No commission requests yet. <Link to="/commissions">Learn about commissions</Link></p>
+        <p className="account-note">You have no commission requests yet. <Link to="/commissions">Learn about commissions</Link></p>
       ) : (
         <table className="account-table">
           <thead><tr><th>#</th><th>Portrait</th><th>Estimate</th><th>Status</th><th>Requested</th></tr></thead>

@@ -389,9 +389,18 @@ a {
   padding-bottom: 0.5rem;
 }
 
+.commissions-section {
+  padding: 1.5rem;
+  border-top: 3px solid var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-end) 60%, var(--color-primary));
+  justify-items: center;
+}
+
 .purchase-intro {
   background-color: color-mix(in srgb, var(--color-primary) 45%, var(--color-end));
   color: var(--color-text);
+  justify-items: center;
 }
 
 .bluesky-pagination {

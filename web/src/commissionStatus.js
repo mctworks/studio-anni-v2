@@ -17,7 +17,7 @@ export const customerStatus = {
   completed: 'Finished',
   awaiting_balance: 'Balance due',
   shipped: 'Shipped',
-  denied: 'Not a fit',
+  denied: 'Commission Denied',
   abandoned: 'Closed',
   stopped: 'Stopped',
   refunded: 'Refunded',

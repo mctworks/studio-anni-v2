@@ -8,6 +8,12 @@ import shopbagDark from './assets/shopbag-icon-dark-mode.svg';
 import shopbagLight from './assets/shopbag-icon-light-mode.svg';
 import saLogoDark from './assets/sa-logo-v2-dark-mode.svg';
 import saLogoLight from './assets/sa-logo-v2.svg';
+import archiveIconDark from './assets/archive-icon-dark-mode.svg';
+import archiveIconLight from './assets/archive-icon-light-mode.svg';
+import galleriesIconDark from './assets/galleries-icon-dark-mode.svg';
+import galleriesIconLight from './assets/galleries-icon-light-mode.svg';
+import commissionIconDark from './assets/commission-icon-dark-mode.svg';
+import commissionIconLight from './assets/commission-icon-light-mode.svg';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -69,20 +75,20 @@ const NavBar = () => {
       >
         <div className="menu-content">
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/'); }}>Home</button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/gallery'); }}>Galleries</button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/archive'); }}>Past Works</button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/commissions'); }}>Commissions</button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/gallery'); }}><img src={isDarkMode ? galleriesIconDark : galleriesIconLight} alt="Galleries" /> Galleries</button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/archive'); }}><img src={isDarkMode ? archiveIconDark : archiveIconLight} alt="Past Works" /> Past Works</button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/commissions'); }}><img src={isDarkMode ? commissionIconDark : commissionIconLight} alt="Commissions" /> Commissions</button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/about'); }}>About</button>
           {staff && (
             <button type="button" onClick={() => { setMenuOpen(false); navigate('/mimosa'); }}>MIMOSA</button>
           )}
           {user && !staff && (
-            <button type="button" onClick={() => { setMenuOpen(false); navigate('/account'); }}>My account</button>
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/account'); }}>My Account</button>
           )}
           {user ? (
-            <button type="button" onClick={async () => { setMenuOpen(false); await logout(); navigate('/'); }}>Sign out</button>
+            <button type="button" onClick={async () => { setMenuOpen(false); await logout(); navigate('/'); }}>Sign Out</button>
           ) : (
-            <button type="button" onClick={() => { setMenuOpen(false); navigate('/login'); }}>Sign in</button>
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/login'); }}>Sign In</button>
           )}
         </div>
       </StackMenu>

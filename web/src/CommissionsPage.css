@@ -55,3 +55,68 @@
 .commissions-prices {
   max-width: 40rem;
 }
+
+.commissions-how, .commissions-pricing {
+  justify-items: center;
+}
+
+.commissions-section {
+  display: grid;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 3px solid var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-end) 60%, var(--color-primary));
+  justify-items: center;
+}
+
+.commissions-section > p {
+  max-width: 70ch;
+  margin: 0;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.commissions-examples {
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.commissions-example {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  border-radius: 0.5rem;
+  background: color-mix(in srgb, var(--color-end) 85%, var(--color-primary));
+  color: var(--color-text);
+  text-decoration: none;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.commissions-example:hover,
+.commissions-example:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px #27122c24;
+}
+
+.commissions-example img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+  background: color-mix(in srgb, var(--color-bg) 85%, var(--color-primary));
+}
+
+.commissions-example span {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.65rem 0.8rem;
+  text-align: center;
+}
+
+.commissions-example small {
+  opacity: 0.8;
+}

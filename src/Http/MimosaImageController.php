@@ -209,6 +209,40 @@ final class MimosaImageController
         return is_file($path) ? $this->stream($response, $path, 'image/jpeg') : $this->err($response, 404, 'file_missing');
     }
 
+    public function updateAltText(Request $request, Response $response, array $args): Response
+    {
+        $imageId = (int) $args['id'];
+        $row = $this->findImage($imageId);
+        if ($row === null) {
+            return $this->err($response, 404, 'not_found');
+        }
+        if ($row['piece_deleted_at'] !== null) {
+            return $this->err($response, 409, 'piece_deleted');
+        }
+
+        $body = $request->getParsedBody();
+        if (! is_array($body) || ! array_key_exists('alt_text', $body)) {
+            return $this->err($response, 422, 'validation', ['fields' => ['alt_text' => 'required']]);
+        }
+        $alt = $body['alt_text'];
+        if (! is_string($alt) && $alt !== null) {
+            return $this->err($response, 422, 'validation', ['fields' => ['alt_text' => 'invalid']]);
+        }
+        $alt = is_string($alt) ? trim($alt) : null;
+        if ($alt !== null && mb_strlen($alt) > 255) {
+            return $this->err($response, 422, 'validation', ['fields' => ['alt_text' => 'too_long']]);
+        }
+        if ($alt === '') {
+            $alt = null;
+        }
+
+        $this->run('UPDATE piece_images SET alt_text = ? WHERE id = ?', [$alt, $imageId]);
+        $this->touchPiece((int) $row['piece_id']);
+        $this->log($request, 'image_alt_text_updated', $imageId, ['has_alt_text' => $alt !== null]);
+
+        return Json::write($response, ['image' => $this->imageView($imageId)]);
+    }
+
     public function watermark(Request $request, Response $response, array $args): Response
     {
         $row = $this->findImage((int) $args['id']);

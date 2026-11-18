@@ -137,7 +137,7 @@ const LandingPage = () => {
         </div>
       </div>
 
-      <div className="container homepage">
+      <div className="container homepage commissions-section">
         <h2>Commissions</h2>
         <div className={`commission-status commission-status--${availability.tone}`}>
           <span className="commission-status__dot" aria-hidden="true" />
@@ -249,7 +249,7 @@ const LandingPage = () => {
       </div>
 
       <div className="container homepage">
-        <h2>NO GENERATIVE AI!</h2>
+        <h2>No Generative AI</h2>
         <p>Anni has never needed the aid of a soulless digital art thief who can't even count fingers to create her work, and she never will!</p>
         <p>This is pledge that all of the art you see on Studio Anni was created by a human hand and mind. Generative AI will never be used in any facet of Anni's creative process. Additionally, she <b>does not consent</b> to having her work included in the training of any AI model.</p>
         <p>For more information about Anni and her work, please see the ABOUT page.</p>

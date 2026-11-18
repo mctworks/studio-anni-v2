@@ -224,6 +224,16 @@ button.mim-link {
   max-width: 160px;
 }
 
+.mim-alt-editor {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.mim-alt-editor input {
+  box-sizing: border-box;
+  width: 100%;
+}
+
 .mim-note {
   font-size: 0.9rem;
   opacity: 0.8;

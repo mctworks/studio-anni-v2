@@ -35,7 +35,7 @@ export default function PublicProfilePage() {
       </div>
       {pieces && (
         <>
-          <h2>Owned pieces</h2>
+          <h2>Your Pieces by Anni</h2>
           <div className="piece-grid piece-grid--three">
             {pieces.map((p) => (
               <Link className="piece-card" key={p.id} to={`/pieces/${p.id}-${p.slug}`}>

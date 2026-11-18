@@ -80,13 +80,14 @@ const AvatarEditor = ({ profile, onChange }) => {
 
   return (
     <div className="account-avatar-row">
+      <h2>User Profile</h2>
       <Avatar src={profile.avatar} name={profile.displayName} />
       <div className="account-avatar-actions">
         <label className="account-link">
-          {profile.avatar ? 'Change picture' : 'Add a picture'}
+          {profile.avatar ? 'Change user image' : 'Add user image'}
           <input type="file" accept="image/*" onChange={pick} disabled={busy} hidden />
         </label>
-        {profile.avatar && <button className="account-link" type="button" onClick={remove} disabled={busy}>Remove picture</button>}
+        {profile.avatar && <button className="account-link" type="button" onClick={remove} disabled={busy}>Remove user image</button>}
         {error && <small className="account-error" role="alert">{error}</small>}
       </div>
     </div>

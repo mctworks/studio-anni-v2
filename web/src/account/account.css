@@ -1,6 +1,7 @@
 .account-page {
   padding-top: clamp(1.5rem, 4vw, 3rem);
   padding-bottom: clamp(2.5rem, 6vw, 5rem);
+  text-align: -webkit-center;
 }
 
 .account-form {
@@ -32,7 +33,7 @@
 }
 
 .account-error {
-  color: #a23b46;
+  color: #d8646f;
   font-size: 0.9rem;
 }
 
@@ -76,6 +77,7 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 1.25rem;
+  justify-content: center;
 }
 
 .account-avatar-actions {

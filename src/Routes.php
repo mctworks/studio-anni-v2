@@ -60,6 +60,7 @@ final class Routes
             $p->get('/pieces/{id:[0-9]+}/images', MimosaImageController::class . ':index');
             $p->post('/pieces/{id:[0-9]+}/images', MimosaImageController::class . ':upload');
             $p->get('/images/{id:[0-9]+}/base', MimosaImageController::class . ':base');
+            $p->patch('/images/{id:[0-9]+}', MimosaImageController::class . ':updateAltText');
             $p->post('/images/{id:[0-9]+}/watermark', MimosaImageController::class . ':watermark');
             $p->post('/images/{id:[0-9]+}/watermark/review', MimosaImageController::class . ':reviewWatermark');
             $p->delete('/images/{id:[0-9]+}/watermark', MimosaImageController::class . ':unwatermark');

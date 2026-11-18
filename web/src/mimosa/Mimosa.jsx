@@ -81,7 +81,7 @@ export default function Mimosa() {
         <Link to="/mimosa/pricing">Pricing</Link>
         <Link to="/mimosa/pieces">Pieces</Link>
         <Link to="/mimosa/users">Users</Link>
-        <Link to="/">View site</Link>
+        <Link to="/">EXIT</Link>
         <span>
           {user.displayName} ({user.role})
         </span>

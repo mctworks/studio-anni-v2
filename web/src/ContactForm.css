@@ -43,3 +43,7 @@
 .dark-mode .contact-form__error {
   color: #ff8a80;
 }
+
+.contact-form {
+  padding-top: 1rem;
+}

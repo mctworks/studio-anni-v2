@@ -42,6 +42,7 @@ export default function ImageManager({ pieceId, deleted, prompt }) {
   const [busy, setBusy] = useState(false);
   const [bust, setBust] = useState(() => Date.now());
   const [editor, setEditor] = useState(null);
+  const [altEditor, setAltEditor] = useState(null);
 
   const limit = cfg ? Math.min(...[cfg.limits.upload_bytes, cfg.limits.post_bytes, cfg.limits.app_bytes].filter((n) => n)) : null;
 
@@ -126,6 +127,22 @@ export default function ImageManager({ pieceId, deleted, prompt }) {
   const remove = (image) => {
     if (!window.confirm('Remove the watermark and restore the unwatermarked image?')) return;
     run(() => api.del(`/images/${image.id}/watermark`));
+  };
+
+  const saveAltText = async () => {
+    if (!altEditor) return;
+    setBusy(true);
+    setError('');
+    try {
+      await api.patch(`/images/${altEditor.imageId}`, { alt_text: altEditor.value });
+      setAltEditor(null);
+      setBust(Date.now());
+      await load();
+    } catch (e) {
+      setError(describe(e, limit));
+    } finally {
+      setBusy(false);
+    }
   };
 
   if (!images || !cfg) {
@@ -214,16 +231,33 @@ export default function ImageManager({ pieceId, deleted, prompt }) {
               <li key={im.id}>
                 <img src={`/media/pieces/${im.filename}?v=${bust}`} alt={im.alt_text ?? ''} loading="lazy" />
                 <small>{im.kind} · {im.watermark_state === 'unknown' ? 'watermark status unknown' : im.watermark_state === 'preexisting' ? 'pre-existing watermark (confirmed)' : im.watermark_state === 'applied' ? 'watermarked' : 'no watermark (confirmed)'}</small>
+                <small>{im.alt_text || 'No alt text'}</small>
                 {!deleted && (
-                  <span className="mim-actions">
-                    {im.watermark_state === 'unknown' && <button type="button" className="mim-link" onClick={() => setEditor({ mode: 'review', image: im })} disabled={busy}>Check watermark…</button>}
-                    {im.watermark_state === 'clean' && <button type="button" className="mim-link" onClick={() => setEditor({ mode: 'existing', image: im, confirmedClean: true })} disabled={busy}>Watermark…</button>}
-                    {im.watermark_state === 'applied' && <button type="button" className="mim-link" onClick={() => setEditor({ mode: 'existing', image: im, confirmedClean: true })} disabled={busy}>Edit watermark…</button>}
-                    {im.watermark_state === 'preexisting' && <button type="button" className="mim-link" onClick={() => setEditor({ mode: 'review', image: im })} disabled={busy}>Change status…</button>}
-                    {im.watermark && (
-                      <button type="button" className="mim-link" onClick={() => remove(im)} disabled={busy}>Remove</button>
+                  <>
+                    {altEditor?.imageId === im.id ? (
+                      <div className="mim-alt-editor">
+                        <label className="mim-field">
+                          <span>Alt text</span>
+                          <input value={altEditor.value} maxLength={255} onChange={(e) => setAltEditor({ ...altEditor, value: e.target.value })} disabled={busy} />
+                        </label>
+                        <span className="mim-actions">
+                          <button type="button" onClick={saveAltText} disabled={busy}>{busy ? 'Saving…' : 'Save alt text'}</button>
+                          <button type="button" className="mim-link" onClick={() => setAltEditor(null)} disabled={busy}>Cancel</button>
+                        </span>
+                      </div>
+                    ) : (
+                      <button type="button" className="mim-link" onClick={() => setAltEditor({ imageId: im.id, value: im.alt_text ?? '' })} disabled={busy}>Edit alt text</button>
                     )}
-                  </span>
+                    <span className="mim-actions">
+                      {im.watermark_state === 'unknown' && <button type="button" className="mim-link" onClick={() => setEditor({ mode: 'review', image: im })} disabled={busy}>Check watermark…</button>}
+                      {im.watermark_state === 'clean' && <button type="button" className="mim-link" onClick={() => setEditor({ mode: 'existing', image: im, confirmedClean: true })} disabled={busy}>Watermark…</button>}
+                      {im.watermark_state === 'applied' && <button type="button" className="mim-link" onClick={() => setEditor({ mode: 'existing', image: im, confirmedClean: true })} disabled={busy}>Edit watermark…</button>}
+                      {im.watermark_state === 'preexisting' && <button type="button" className="mim-link" onClick={() => setEditor({ mode: 'review', image: im })} disabled={busy}>Change status…</button>}
+                      {im.watermark && (
+                        <button type="button" className="mim-link" onClick={() => remove(im)} disabled={busy}>Remove</button>
+                      )}
+                    </span>
+                  </>
                 )}
               </li>
             ))}

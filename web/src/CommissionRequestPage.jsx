@@ -136,7 +136,8 @@ export default function CommissionRequestPage() {
     return (
       <section className="container content-page crf">
         <h1>Portrait Request Form</h1>
-        <p>Please <Link to="/login">sign in or create an account</Link> to request a portrait. Questions first? Use the contact form on the <Link to="/commissions">Commissions page</Link>.</p>
+        <p>In order to request a commission, you will first need to sign in or create a Studio Anni account. If you have questions, feel free to use the contact form on the <Link to="/commissions">Commissions page</Link> before sending a request with this form.</p>
+        <button type="button" className="page-nav-button" onClick={() => navigate('/login')}>Sign In / Create Account</button>
       </section>
     );
   }
