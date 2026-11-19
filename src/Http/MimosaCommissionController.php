@@ -9,6 +9,7 @@ use App\Auth\ClientIp;
 use App\Commissions\Pricing;
 use App\Commissions\Workflow;
 use App\Config;
+use App\Payments\Locking;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -69,8 +70,8 @@ final class MimosaCommissionController
     {
         $id = (int) $args['id'];
         $st = $this->pdo->prepare(
-            'SELECT c.*, cs.label AS size, u.email, u.display_name FROM commissions c
-             JOIN canvas_sizes cs ON cs.id = c.canvas_size_id JOIN users u ON u.id = c.user_id WHERE c.id = ?'
+            'SELECT c.*, o.id AS order_id, cs.label AS size, u.email, u.display_name FROM commissions c
+             JOIN orders o ON o.commission_id = c.id JOIN canvas_sizes cs ON cs.id = c.canvas_size_id JOIN users u ON u.id = c.user_id WHERE c.id = ?'
         );
         $st->execute([$id]);
         $c = $st->fetch();
@@ -97,6 +98,8 @@ final class MimosaCommissionController
             'pet_count' => (int) $c['pet_count'],
             'person_count' => (int) $c['person_count'],
             'quoted_cents' => (int) $c['quoted_cents'],
+            'deposit_cents' => intdiv((int) $c['quoted_cents'] * $this->pricing->depositPercent() + 99, 100),
+            'remaining_base_cents' => max(0, (int) $c['quoted_cents'] - $this->paidBase((int) $c['order_id'], $id)),
             'delivery' => (string) $c['delivery'],
             'postal_code' => $c['postal_code'],
             'description' => (string) $c['description'],
@@ -104,6 +107,7 @@ final class MimosaCommissionController
             'terms_accepted_at' => (string) $c['terms_accepted_at'],
             'created_at' => (string) $c['created_at'],
             'files' => array_map(static fn (array $f): array => ['id' => (int) $f['id'], 'original_name' => (string) $f['original_name']], $files->fetchAll()),
+            'external_payments' => $this->externalPayments($id),
             'events' => array_map(static fn (array $e): array => [
                 'kind' => (string) $e['kind'],
                 'from' => $e['from_status'],
@@ -114,6 +118,114 @@ final class MimosaCommissionController
                 'created_at' => (string) $e['created_at'],
             ], $ev->fetchAll()),
         ]]);
+    }
+
+    public function recordExternalPayment(Request $request, Response $response, array $args): Response
+    {
+        $body = $request->getParsedBody();
+        if (! is_array($body) || ! in_array($body['kind'] ?? null, ['deposit', 'full', 'balance'], true)
+            || ! in_array($body['method'] ?? null, ['paypal', 'venmo', 'other'], true)) {
+            return $this->err($response, 400, 'invalid_request');
+        }
+        $reference = $body['reference'] ?? '';
+        if (! is_string($reference) || mb_strlen($reference) > 120) {
+            return $this->err($response, 422, 'invalid_reference');
+        }
+        $reference = trim(preg_replace('/[\\x00-\\x1F\\x7F]/', '', $reference) ?? '');
+        $id = (int) $args['id'];
+        $actor = (int) $request->getAttribute('user')['id'];
+        $now = gmdate('Y-m-d H:i:s');
+
+        $this->pdo->beginTransaction();
+        try {
+            $st = $this->pdo->prepare(
+                "SELECT c.status, c.quoted_cents, o.id AS order_id FROM commissions c JOIN orders o ON o.commission_id = c.id WHERE c.id = ?" . Locking::forUpdate($this->pdo)
+            );
+            $st->execute([$id]);
+            $commission = $st->fetch();
+            if ($commission === false) {
+                $this->pdo->rollBack();
+
+                return $this->err($response, 404, 'not_found');
+            }
+            $isUpfront = in_array($body['kind'], ['deposit', 'full'], true);
+            $validStatus = $isUpfront
+                ? $commission['status'] === 'quoted'
+                : in_array($commission['status'], ['completed', 'awaiting_balance'], true);
+            if (! $validStatus) {
+                $this->pdo->rollBack();
+
+                return $this->err($response, 409, 'not_payable');
+            }
+            $existing = $isUpfront
+                ? $this->pdo->prepare("SELECT 1 FROM payments WHERE order_id = ? AND status IN ('pending', 'succeeded') UNION ALL SELECT 1 FROM commission_external_payments WHERE commission_id = ? LIMIT 1")
+                : $this->pdo->prepare("SELECT 1 FROM payments WHERE order_id = ? AND kind = 'balance' AND status IN ('pending', 'succeeded') UNION ALL SELECT 1 FROM commission_external_payments WHERE commission_id = ? AND kind = 'balance' LIMIT 1");
+            $existing->execute([$commission['order_id'], $id]);
+            if ($existing->fetchColumn() !== false) {
+                $this->pdo->rollBack();
+
+                return $this->err($response, 409, 'payment_exists');
+            }
+            $amount = match ($body['kind']) {
+                'full' => (int) $commission['quoted_cents'],
+                'deposit' => intdiv((int) $commission['quoted_cents'] * $this->pricing->depositPercent() + 99, 100),
+                'balance' => max(0, (int) $commission['quoted_cents'] - $this->paidBase((int) $commission['order_id'], $id)),
+            };
+            if ($amount === 0) {
+                $this->pdo->rollBack();
+
+                return $this->err($response, 409, 'not_payable');
+            }
+            $this->pdo->prepare(
+                'INSERT INTO commission_external_payments (commission_id, kind, method, amount_cents, reference, recorded_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+            )->execute([$id, $body['kind'], $body['method'], $amount, $reference === '' ? null : $reference, $actor, $now]);
+            $this->pdo->prepare('UPDATE orders SET paid_cents = paid_cents + ?, updated_at = ? WHERE id = ?')
+                ->execute([$amount, $now, $commission['order_id']]);
+            $this->pdo->commit();
+        } catch (\Throwable $e) {
+            if ($this->pdo->inTransaction()) {
+                $this->pdo->rollBack();
+            }
+            throw $e;
+        }
+
+        $transition = $isUpfront ? $this->workflow->transition($id, 'deposit_paid', null, $actor) : ['ok' => true, 'emailed' => false];
+        $this->audit->record('commission_external_payment', $actor, 'commission', (string) $id, [
+            'kind' => $body['kind'], 'method' => $body['method'], 'amount_cents' => $amount,
+        ], ClientIp::from($request), $request->getHeaderLine('User-Agent'));
+        if (! $transition['ok']) {
+            return $this->err($response, 500, 'payment_recorded_status_update_failed');
+        }
+
+        return Json::write($response, ['ok' => true, 'amount_cents' => $amount, 'emailed' => $transition['emailed']]);
+    }
+
+    private function externalPayments(int $commissionId): array
+    {
+        $st = $this->pdo->prepare(
+            'SELECT kind, method, amount_cents, reference, created_at FROM commission_external_payments WHERE commission_id = ? ORDER BY id'
+        );
+        $st->execute([$commissionId]);
+
+        return array_map(static fn (array $r): array => [
+            'kind' => (string) $r['kind'],
+            'method' => (string) $r['method'],
+            'amount_cents' => (int) $r['amount_cents'],
+            'reference' => $r['reference'],
+            'created_at' => (string) $r['created_at'],
+        ], $st->fetchAll());
+    }
+
+    private function paidBase(int $orderId, int $commissionId): int
+    {
+        $st = $this->pdo->prepare(
+            "SELECT COALESCE(SUM(base_cents), 0) FROM payments WHERE order_id = ? AND status = 'succeeded'
+             UNION ALL SELECT COALESCE(SUM(amount_cents), 0) FROM commission_external_payments WHERE commission_id = ?"
+        );
+        $st->execute([$orderId, $commissionId]);
+        $amounts = $st->fetchAll(\PDO::FETCH_COLUMN);
+
+        return (int) $amounts[0] + (int) $amounts[1];
     }
 
     public function file(Request $request, Response $response, array $args): Response
@@ -175,7 +287,7 @@ final class MimosaCommissionController
         $count->execute($args);
         $st = $this->pdo->prepare(
             'SELECT o.id, o.kind, o.commission_id, o.piece_id, o.status, o.total_cents, o.paid_cents, o.created_at, u.email, u.display_name,
-                    c.subject_type, cs.label AS size, p.title ' . $sql . ' ORDER BY o.created_at DESC, o.id DESC LIMIT 50 OFFSET ' . $offset
+                    c.subject_type, cs.label AS size, COALESCE((SELECT GROUP_CONCAT(pp.title) FROM order_items oi JOIN pieces pp ON pp.id = oi.piece_id WHERE oi.order_id = o.id), p.title) AS title ' . $sql . ' ORDER BY o.created_at DESC, o.id DESC LIMIT 50 OFFSET ' . $offset
         );
         $st->execute($args);
 

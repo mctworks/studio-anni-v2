@@ -12,6 +12,7 @@ import CommissionsHome from './CommissionsHome.jsx';
 import CommissionDetail from './CommissionDetail.jsx';
 import PricingEditor from './PricingEditor.jsx';
 import OrdersList from './OrdersList.jsx';
+import ContactMessages from './ContactMessages.jsx';
 
 export default function Mimosa() {
   const auth = useAuth();
@@ -81,6 +82,7 @@ export default function Mimosa() {
         <Link to="/mimosa/pricing">Pricing</Link>
         <Link to="/mimosa/pieces">Pieces</Link>
         <Link to="/mimosa/users">Users</Link>
+        <Link to="/mimosa/contact">Contact</Link>
         <Link to="/">EXIT</Link>
         <span>
           {user.displayName} ({user.role})
@@ -107,6 +109,7 @@ export default function Mimosa() {
           <Route path="pieces/:id" element={<PieceForm meta={meta} />} />
           <Route path="users" element={<UserList />} />
           <Route path="users/:id" element={<UserDetail me={user} />} />
+          <Route path="contact" element={<ContactMessages />} />
           <Route path="*" element={<div>404 Not Found</div>} />
         </Routes>
       ) : (

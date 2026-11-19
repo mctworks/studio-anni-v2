@@ -19,6 +19,9 @@ export default function CommissionDetail() {
   const [note, setNote] = useState('');
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState('');
+  const [externalKind, setExternalKind] = useState('deposit');
+  const [externalMethod, setExternalMethod] = useState('paypal');
+  const [externalReference, setExternalReference] = useState('');
 
   const load = useCallback(() => api.get(`/commissions/${id}`).then((d) => {
     setC(d.commission);
@@ -39,6 +42,25 @@ export default function CommissionDetail() {
       setResult(d.emailed ? 'Status updated and the customer was emailed.' : 'Status updated, but the email could not be sent.');
     } catch (err) {
       setResult(ERR[err.code] ?? `Could not update (${err.status ?? 'network'}).`);
+    }
+    await load().catch(() => {});
+    setBusy(false);
+  };
+
+  const recordExternalPayment = async (e) => {
+    e.preventDefault();
+    setBusy(true);
+    setResult('');
+    try {
+      const d = await api.post(`/commissions/${id}/external-payment`, {
+        kind: c.status === 'quoted' ? externalKind : 'balance',
+        method: externalMethod,
+        reference: externalReference,
+      });
+      setExternalReference('');
+      setResult(d.emailed ? 'Payment recorded and the customer was emailed.' : 'Payment recorded.');
+    } catch (err) {
+      setResult(err.code === 'payment_exists' ? 'A website payment is already pending or paid for this commission.' : `Could not record payment (${err.status ?? 'network'}).`);
     }
     await load().catch(() => {});
     setBusy(false);
@@ -79,6 +101,42 @@ export default function CommissionDetail() {
         )}
         {result && <p role="status" className="mim-note">{result}</p>}
       </section>
+
+      {(c.status === 'quoted' || (['completed', 'awaiting_balance'].includes(c.status) && c.remaining_base_cents > 0)) && (
+        <section className="mim-panel">
+          <h3>Record payment received outside the website</h3>
+          <p className="mim-note">Use this after receiving a payment through PayPal, Venmo, or another method. The customer can still pay any remaining website balance, including shipping, on their commission page.</p>
+          <form className="mim-form" onSubmit={recordExternalPayment}>
+            {c.status === 'quoted' ? (
+              <select value={externalKind} onChange={(e) => setExternalKind(e.target.value)} aria-label="External payment amount">
+                <option value="deposit">Deposit · ${centsToDollars(c.deposit_cents)}</option>
+                {c.deposit_cents < c.quoted_cents && <option value="full">Full commission price · ${centsToDollars(c.quoted_cents)}</option>}
+              </select>
+            ) : <p><strong>Remaining commission price · ${centsToDollars(c.remaining_base_cents)}</strong></p>}
+            <select value={externalMethod} onChange={(e) => setExternalMethod(e.target.value)} aria-label="External payment method">
+              <option value="paypal">PayPal</option>
+              <option value="venmo">Venmo</option>
+              <option value="other">Other</option>
+            </select>
+            <input maxLength={120} value={externalReference} onChange={(e) => setExternalReference(e.target.value)} placeholder="Optional transaction reference" aria-label="Transaction reference" />
+            <button type="submit" disabled={busy}>{busy ? 'Recording…' : c.status === 'quoted' ? 'Record payment and accept commission' : 'Record external balance payment'}</button>
+          </form>
+        </section>
+      )}
+
+      {c.external_payments.length > 0 && (
+        <section className="mim-panel">
+          <h3>Payments received outside the website</h3>
+          <ul className="mim-history">
+            {c.external_payments.map((p, i) => (
+              <li key={i}>
+                <strong>${centsToDollars(p.amount_cents)} · {{ full: 'Full commission price', deposit: 'Deposit', balance: 'Balance' }[p.kind] ?? p.kind} · {p.method === 'other' ? 'Other' : p.method[0].toUpperCase() + p.method.slice(1)}</strong>
+                <span className="mim-note"> · {formatDate(p.created_at)}{p.reference ? ` · ${p.reference}` : ''}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <h3>Description</h3>
       <p className="mim-pre">{c.description}</p>

@@ -16,6 +16,7 @@ final class MimosaHealthController
         'mail' => ['label' => 'Email (SMTP)', 'keys' => ['MAIL_HOST', 'MAIL_USER', 'MAIL_PASS']],
         'bluesky' => ['label' => 'Bluesky feed', 'keys' => ['BSKY_HANDLE', 'BSKY_APP_PASSWORD']],
         'usps' => ['label' => 'USPS shipping', 'keys' => ['USPS_ORIGIN_ZIP', 'USPS_CLIENT_ID', 'USPS_CLIENT_SECRET']],
+        'ziptax' => ['label' => 'Georgia sales tax', 'keys' => ['ZIPTAX_API_KEY']],
     ];
 
     public function __construct(

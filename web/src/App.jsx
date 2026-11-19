@@ -7,12 +7,17 @@ import PiecePage from './PiecePage.jsx';
 import CommissionsPage from './CommissionsPage.jsx';
 import CommissionRequestPage from './CommissionRequestPage.jsx';
 import CommissionStatusPage from './account/CommissionStatusPage.jsx';
+import CartPage from './CartPage.jsx';
+import CheckoutPage from './checkout/CheckoutPage.jsx';
+import PayCommissionPage from './checkout/PayCommissionPage.jsx';
+import PaymentCompletePage from './checkout/PaymentCompletePage.jsx';
 import AccountPage from './account/AccountPage.jsx';
 import PublicProfilePage from './account/PublicProfilePage.jsx';
 import LoginPage from './LoginPage.jsx';
 import NavBar from './NavBar.jsx';
 import Footer from './Footer.jsx';
 import { AuthProvider } from './AuthContext.jsx';
+import { CartProvider } from './CartContext.jsx';
 import { ThemeProvider } from './ThemeContext.jsx';
 
 const Mimosa = lazy(() => import('./mimosa/Mimosa.jsx'));
@@ -42,6 +47,10 @@ function Site() {
             <Route path="/commissions" element={<CommissionsPage />} />
             <Route path="/commissions/request" element={<CommissionRequestPage />} />
             <Route path="/account/commissions/:id" element={<CommissionStatusPage />} />
+            <Route path="/account/commissions/:id/pay" element={<PayCommissionPage />} />
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/checkout" element={<CheckoutPage />} />
+            <Route path="/payment/complete" element={<PaymentCompletePage />} />
             <Route path="/pieces/:pieceKey" element={<PiecePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/account" element={<AccountPage />} />
@@ -106,7 +115,9 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <PageTransitions />
+        <CartProvider>
+          <PageTransitions />
+        </CartProvider>
       </AuthProvider>
     </ThemeProvider>
   );

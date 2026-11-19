@@ -4,21 +4,18 @@ import { Link, useNavigate } from 'react-router-dom';
 import ThemeToggle from './ThemeToggle';
 import { useAuth } from './AuthContext.jsx';
 import { useTheme } from './ThemeContext.jsx';
+import { useCart } from './CartContext.jsx';
+import './checkout/checkout.css';
 import shopbagDark from './assets/shopbag-icon-dark-mode.svg';
 import shopbagLight from './assets/shopbag-icon-light-mode.svg';
 import saLogoDark from './assets/sa-logo-v2-dark-mode.svg';
 import saLogoLight from './assets/sa-logo-v2.svg';
-import archiveIconDark from './assets/archive-icon-dark-mode.svg';
-import archiveIconLight from './assets/archive-icon-light-mode.svg';
-import galleriesIconDark from './assets/galleries-icon-dark-mode.svg';
-import galleriesIconLight from './assets/galleries-icon-light-mode.svg';
-import commissionIconDark from './assets/commission-icon-dark-mode.svg';
-import commissionIconLight from './assets/commission-icon-light-mode.svg';
 
 const NavBar = () => {
   const navigate = useNavigate();
   const { user, staff, logout } = useAuth();
   const { isDarkMode } = useTheme();
+  const cart = useCart();
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleMenuStateChange = useCallback(({ isOpen }) => {
@@ -42,11 +39,14 @@ const NavBar = () => {
           {staff && (
             <button type="button" className="nav-mimosa" onClick={() => navigate('/mimosa')}>MIMOSA</button>
           )}
-          <img
-            src={isDarkMode ? shopbagDark : shopbagLight} 
-            alt="Cart" 
-            className="nav-icon" 
-          />
+          <Link to="/cart" className="nav-cart" aria-label={cart.count > 0 ? `Cart, ${cart.count} items` : 'Cart'}>
+            <img
+              src={isDarkMode ? shopbagDark : shopbagLight}
+              alt=""
+              className="nav-icon"
+            />
+            {cart.count > 0 && <span className="nav-cart__count" aria-hidden="true">{cart.count}</span>}
+          </Link>
           <div className="nav-theme-wrapper"><ThemeToggle /></div>
           <button
             type="button"
@@ -75,20 +75,20 @@ const NavBar = () => {
       >
         <div className="menu-content">
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/'); }}>Home</button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/gallery'); }}><img src={isDarkMode ? galleriesIconDark : galleriesIconLight} alt="Galleries" /> Galleries</button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/archive'); }}><img src={isDarkMode ? archiveIconDark : archiveIconLight} alt="Past Works" /> Past Works</button>
-          <button type="button" onClick={() => { setMenuOpen(false); navigate('/commissions'); }}><img src={isDarkMode ? commissionIconDark : commissionIconLight} alt="Commissions" /> Commissions</button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/gallery'); }}>Galleries</button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/archive'); }}>Past Works</button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/commissions'); }}>Commissions</button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/about'); }}>About</button>
           {staff && (
             <button type="button" onClick={() => { setMenuOpen(false); navigate('/mimosa'); }}>MIMOSA</button>
           )}
           {user && !staff && (
-            <button type="button" onClick={() => { setMenuOpen(false); navigate('/account'); }}>My Account</button>
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/account'); }}>My account</button>
           )}
           {user ? (
-            <button type="button" onClick={async () => { setMenuOpen(false); await logout(); navigate('/'); }}>Sign Out</button>
+            <button type="button" onClick={async () => { setMenuOpen(false); await logout(); navigate('/'); }}>Sign out</button>
           ) : (
-            <button type="button" onClick={() => { setMenuOpen(false); navigate('/login'); }}>Sign In</button>
+            <button type="button" onClick={() => { setMenuOpen(false); navigate('/login'); }}>Sign in</button>
           )}
         </div>
       </StackMenu>

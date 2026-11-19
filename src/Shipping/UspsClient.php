@@ -20,8 +20,12 @@ final class UspsClient
     /** @throws ShippingUnavailable */
     public function postageCents(string $destZip5, float $weightOz, float $lengthIn, float $widthIn, float $heightIn, int $declaredCents): int
     {
+        $origin = $this->config->get('USPS_ORIGIN_ZIP');
+        if ($origin === null) {
+            throw new ShippingUnavailable('not_configured');
+        }
         $body = [
-            'originZIPCode' => $this->config->getRequired('USPS_ORIGIN_ZIP'),
+            'originZIPCode' => $origin,
             'destinationZIPCode' => $destZip5,
             'weight' => round($weightOz / 16, 4),
             'length' => $lengthIn,
@@ -87,6 +91,11 @@ final class UspsClient
     /** @throws ShippingUnavailable */
     private function token(bool $refresh = false): string
     {
+        $clientId = $this->config->get('USPS_CLIENT_ID');
+        $clientSecret = $this->config->get('USPS_CLIENT_SECRET');
+        if ($clientId === null || $clientSecret === null) {
+            throw new ShippingUnavailable('not_configured');
+        }
         $file = $this->config->root . '/storage/cache/usps_token.json';
 
         if (! $refresh && is_file($file)) {
@@ -98,8 +107,8 @@ final class UspsClient
 
         [$status, $json] = $this->call('/oauth2/v3/token', http_build_query([
             'grant_type' => 'client_credentials',
-            'client_id' => $this->config->getRequired('USPS_CLIENT_ID'),
-            'client_secret' => $this->config->getRequired('USPS_CLIENT_SECRET'),
+            'client_id' => $clientId,
+            'client_secret' => $clientSecret,
         ]), 'application/x-www-form-urlencoded');
 
         if ($status !== 200 || ! is_array($json) || ! is_string($json['access_token'] ?? null)) {

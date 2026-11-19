@@ -17,7 +17,7 @@ export const STATUS_LABEL = {
   quoted: 'Quoted',
   deposit_paid: 'Deposit paid',
   in_progress: 'In progress',
-  completed: 'Completed',
+  completed: 'Finished',
   awaiting_balance: 'Awaiting balance',
   shipped: 'Shipped',
   denied: 'Denied',

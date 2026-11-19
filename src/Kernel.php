@@ -11,6 +11,8 @@ use App\Http\Middleware\KillSwitchMiddleware;
 use App\Http\Middleware\SecurityHeadersMiddleware;
 use App\Mail\Mailer;
 use App\Mail\SmtpMailer;
+use App\Payments\PaymentGateway;
+use App\Payments\StripeGateway;
 use DI\Container;
 use Dotenv\Dotenv;
 use Psr\Container\ContainerInterface;
@@ -31,6 +33,7 @@ final class Kernel
             Config::class => $config,
             \PDO::class => static fn (ContainerInterface $c): \PDO => Database::connect($c->get(Config::class)),
             Mailer::class => \DI\autowire(SmtpMailer::class),
+            PaymentGateway::class => \DI\autowire(StripeGateway::class),
             ResponseFactoryInterface::class => static fn (): ResponseFactoryInterface => new ResponseFactory(),
             PasswordService::class => static fn (ContainerInterface $c): PasswordService => new PasswordService(
                 $c->get(Config::class),

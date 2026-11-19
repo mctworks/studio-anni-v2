@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AddToCart from './AddToCart.jsx';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import archiveIconDark from './assets/archive-icon-dark-mode.svg';
 import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
@@ -101,6 +102,7 @@ const PiecePage = () => {
           <h1>{piece.title}</h1>
           <p className="piece-detail__meta">{piece.size}{piece.medium ? ` · ${piece.medium}` : ''}</p>
           {piece.status === 'available' && formattedPrice && <p className="piece-detail__price">{formattedPrice}</p>}
+          {piece.status === 'available' && piece.purchase_mode === 'buy' && price != null && <AddToCart pieceId={piece.id} />}
           {piece.status_note && <p className="piece-detail__note">{piece.status_note}</p>}
           {piece.description && <p className="piece-detail__description">{piece.description}</p>}
           {piece.origin === 'commission' && (

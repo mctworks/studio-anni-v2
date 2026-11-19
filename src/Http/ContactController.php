@@ -8,6 +8,7 @@ use App\Auth\ClientIp;
 use App\Auth\RateLimiter;
 use App\Config;
 use App\Contact\ContactGuard;
+use App\Contact\ContactSenders;
 use App\Mail\Mailer;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -19,12 +20,12 @@ final class ContactController
 
     public function __construct(
         private readonly ContactGuard $guard,
+        private readonly ContactSenders $senders,
         private readonly RateLimiter $limits,
         private readonly Mailer $mailer,
         private readonly Config $config,
     ) {
     }
-
     public function token(Request $request, Response $response): Response
     {
         return Json::write($response, ['token' => $this->guard->issue()])->withHeader('Cache-Control', 'no-store');
@@ -58,14 +59,18 @@ final class ContactController
         }
 
         $ip = ClientIp::from($request);
+        if ($this->senders->blocked($ip, $email)) {
+            return Json::write($response, ['ok' => true]);
+        }
         if ($this->limits->tooMany('contact_ip', $ip, 5, 3600) || $this->limits->tooMany('contact_email', $email, 3, 3600)) {
             return $this->err($response, 429, 'rate_limited');
         }
         $this->limits->hit('contact_ip', $ip);
         $this->limits->hit('contact_email', $email);
 
+        $this->senders->log($name, $email, $ip, $source, $message);
         $to = $this->config->get('CONTACT_TO') ?? $this->config->get('MAIL_FROM') ?? $this->config->getRequired('MAIL_USER');
-        $text = "Name: {$name}\nEmail: {$email}\nSent from: " . self::SOURCES[$source] . "\n\n{$message}\n";
+        $text = "Name: {$name}\nEmail: {$email}\nSent from: " . self::SOURCES[$source] . "\n\n{$message}\n\n--\nBlock a sender: " . rtrim($this->config->getRequired('APP_URL'), '/') . "/mimosa/contact\n";
         if (! $this->mailer->send($to, 'Studio Anni contact: ' . $name, $text, $email)) {
             return $this->err($response, 502, 'send_failed');
         }

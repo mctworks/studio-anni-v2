@@ -14,7 +14,7 @@ final class Workflow
         'info_requested' => ['quoted', 'denied', 'abandoned'],
         'customer_replied' => ['info_requested', 'quoted', 'denied'],
         'quoted' => ['deposit_paid', 'abandoned', 'stopped'],
-        'deposit_paid' => ['in_progress', 'stopped', 'refunded'],
+        'deposit_paid' => ['in_progress', 'completed', 'stopped', 'refunded'],
         'in_progress' => ['completed', 'stopped', 'refunded'],
         'completed' => ['awaiting_balance', 'shipped'],
         'awaiting_balance' => ['shipped', 'stopped'],
@@ -176,10 +176,10 @@ final class Workflow
 
         return match ($status) {
             'info_requested' => ['subject' => "Anni has a question about your {$ref}", 'body' => "Anni needs a little more information before she can approve your {$ref}. Please sign in and reply on your commission page."],
-            'quoted' => ['subject' => "Your {$ref} is approved", 'body' => "Good news! Anni approved your {$ref}.\n\nPrice: {$total} plus shipping. A {$depositPercent}% deposit ({$deposit}) or payment in full begins the work. Payment is completed on your commission page once it is open for this request."],
+            'quoted' => ['subject' => "Your {$ref} is approved", 'body' => "Good news! Anni approved your {$ref}.\n\nPrice: {$total} plus shipping. A {$depositPercent}% deposit ({$deposit}) or payment in full begins the work. Pay your deposit or the full amount on your commission page to begin."],
             'deposit_paid' => ['subject' => "Payment received for your {$ref}", 'body' => "Thank you! Your payment for {$ref} was received and Anni will begin soon."],
             'in_progress' => ['subject' => "Anni has started your {$ref}", 'body' => "Anni has started painting your {$ref}."],
-            'completed' => ['subject' => "Your {$ref} is finished", 'body' => "Anni has finished your {$ref}."],
+            'completed' => ['subject' => "Your {$ref} is finished", 'body' => "Anni has finished your {$ref}. If a balance is due, you can pay it on your commission page."],
             'awaiting_balance' => ['subject' => "Balance due for your {$ref}", 'body' => "Your {$ref} is finished and waiting on the remaining balance before it ships."],
             'shipped' => ['subject' => "Your {$ref} has shipped", 'body' => "Your {$ref} is on its way."],
             'denied' => ['subject' => "Update on your {$ref}", 'body' => "Unfortunately Anni is not able to take on your {$ref}."],

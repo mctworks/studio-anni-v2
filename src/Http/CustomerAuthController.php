@@ -19,6 +19,7 @@ use App\Customers\Avatars;
 use App\Customers\Customers;
 use App\Images\ImageException;
 use App\Mail\Mailer;
+use App\Contact\ContactSenders;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Message\UploadedFileInterface;
@@ -40,6 +41,7 @@ final class CustomerAuthController
         private readonly Mailer $mailer,
         private readonly Config $config,
         private readonly Avatars $avatars,
+        private readonly ContactSenders $senders,
     ) {
     }
 
@@ -69,6 +71,9 @@ final class CustomerAuthController
         $sentAt = is_int($b['t'] ?? null) ? intdiv($b['t'], 1000) : 0;
         if (($b['website'] ?? '') !== '' || $sentAt === 0 || time() - $sentAt < self::MIN_FORM_SECONDS) {
             return $this->err($response, 400, 'invalid_request');
+        }
+        if ($this->senders->blocked($ip, $email, false)) {
+            return Json::write($response, ['status' => 'verify_required', 'csrfToken' => Csrf::token($_SESSION)]);
         }
         if ($this->limits->tooMany('signup', $ip, 5, 3600)) {
             return $this->err($response, 429, 'too_many_attempts');

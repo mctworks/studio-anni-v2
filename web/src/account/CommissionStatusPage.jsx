@@ -55,6 +55,7 @@ export default function CommissionStatusPage() {
         <dt>Source images</dt><dd>{c.photo_count}</dd>
         <dt>Requested</dt><dd>{when(c.created_at)}</dd>
       </dl>
+      {['quoted', 'completed', 'awaiting_balance'].includes(c.status) && <p><Link className="page-nav-button" to={`/account/commissions/${c.id}/pay`}>Make a payment</Link></p>}
       <h2>What you asked for</h2>
       <p className="account-pre">{c.description}</p>
 
