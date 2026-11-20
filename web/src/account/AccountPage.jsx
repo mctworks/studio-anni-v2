@@ -4,6 +4,7 @@ import { account } from './api.js';
 import AuthFlow from './AuthFlow.jsx';
 import Avatar from './Avatar.jsx';
 import MyCommissions from './MyCommissions.jsx';
+import AddressBook from './AddressBook.jsx';
 import { useAuth } from '../AuthContext.jsx';
 import './account.css';
 
@@ -80,8 +81,8 @@ const AvatarEditor = ({ profile, onChange }) => {
 
   return (
     <div className="account-avatar-row">
-      <h2>User Profile</h2>
-      <Avatar src={profile.avatar} name={profile.displayName} />
+      <div><h2>User Profile</h2><br/></div>
+      <div><Avatar src={profile.avatar} name={profile.displayName} /></div>
       <div className="account-avatar-actions">
         <label className="account-link">
           {profile.avatar ? 'Change user image' : 'Add user image'}
@@ -126,7 +127,7 @@ const Settings = ({ profile, onChange, onSignOut }) => {
     <>
     <AvatarEditor profile={profile} onChange={onChange} />
     <form onSubmit={submit} className="account-form" onChange={() => setSaved(false)}>
-      <h2>{profile.displayName}</h2>
+      <h3>{profile.displayName}</h3>
       <p>@{profile.username} · {profile.title}</p>
       <Field label="Display name" error={errors.displayName}>
         <input name="displayName" defaultValue={profile.displayName} maxLength={80} required />
@@ -234,7 +235,6 @@ export default function AccountPage() {
   return (
     <div className="container account-page">
       {staffBar}
-      <MyCommissions />
       <Settings
         profile={profile}
         onChange={setProfile}
@@ -244,6 +244,8 @@ export default function AccountPage() {
           setPhase('login');
         }}
       />
+      <MyCommissions />
+      <AddressBook />
     </div>
   );
 }

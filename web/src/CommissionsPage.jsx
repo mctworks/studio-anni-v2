@@ -180,7 +180,7 @@ export default function CommissionsPage() {
         )}
       </section>
 
-      <ContactForm source="commissions" heading="Have a question first?" intro="Have questions about pricing, sizes, photos or timing? Anni will be more than happy to answer any questions. For a business or organization commission, contact us here instead of using the request form. <b>PLEASE NOTE: This form is for only customers and commission inquiries. Unsolicited sales pitches will result in a permanent e-mail ban and Studio Anni account suspension." />
+      <ContactForm source="commissions" heading="Have a question first?" intro="Have questions about pricing, sizes, photos or timing? Anni will be more than happy to answer any questions. For a business or organization commission, contact us here instead of using the request form." />
     </section>
   );
 }

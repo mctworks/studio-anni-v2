@@ -80,7 +80,7 @@ export default function ContactForm({ source = 'general', heading = 'Contact us'
     <section className={`contact-form ${className}`.trim()}>
       <h2>{heading}</h2>
       {intro && <p>{intro}</p>}
-      <p><small>This form is strictly for customers and commission questions. Unsolicited sales pitches and advertising will result in a permanent ban from this site.</small></p>
+      <p><small>This form is strictly for customers, commission questions, and questions about the art presented on this site. <b>Unsolicited sales pitches and advertising will result in a permanent ban from this site, and possibly account suspension.</b></small></p>
       <form onSubmit={submit}>
         <div className="contact-form__trap" aria-hidden="true">
           <label>Leave this field empty<input type="text" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} /></label>

@@ -31,7 +31,7 @@ final class CheckoutController
         $this->limits->hit('checkout_quote', (string) $userId);
         $body = $this->body($request);
 
-        return $this->out($response, $this->checkout->quote($userId, $body['method'] ?? null, $body['address'] ?? null));
+        return $this->out($response, $this->checkout->quote($userId, $body['method'] ?? null, $body['deliveries'] ?? null));
     }
 
     public function pay(Request $request, Response $response): Response

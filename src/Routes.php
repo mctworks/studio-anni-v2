@@ -11,6 +11,7 @@ use App\Http\CommissionPaymentController;
 use App\Http\StripeWebhookController;
 use App\Http\CommissionRequestController;
 use App\Http\ContactController;
+use App\Http\AddressBookController;
 use App\Http\CustomerAuthController;
 use App\Http\HealthController;
 use App\Http\BlueskyController;
@@ -102,6 +103,10 @@ final class Routes
                 $p->patch('/profile', CustomerAuthController::class . ':updateProfile');
                 $p->post('/profile/avatar', CustomerAuthController::class . ':uploadAvatar');
                 $p->delete('/profile/avatar', CustomerAuthController::class . ':removeAvatar');
+                $p->get('/addresses', AddressBookController::class . ':index');
+                $p->post('/addresses', AddressBookController::class . ':create');
+                $p->patch('/addresses/{id:[0-9]+}', AddressBookController::class . ':update');
+                $p->delete('/addresses/{id:[0-9]+}', AddressBookController::class . ':delete');
                 $p->get('/commissions', CommissionRequestController::class . ':list');
                 $p->post('/commissions', CommissionRequestController::class . ':create');
                 $p->get('/commissions/{id:[0-9]+}', CommissionRequestController::class . ':show');
