@@ -1,0 +1,36 @@
+.guestbook {
+  padding-top: clamp(2.5rem, 6vw, 5rem);
+  padding-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
+.guestbook > h1 {
+  margin-bottom: 1.5rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+  line-height: 1.08;
+}
+
+.guestbook__intro {
+  max-width: 70ch;
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.guestbook__sign {
+  margin: 1.5rem 0 2.5rem;
+  padding: 1.5rem;
+  border-top: 3px solid var(--color-primary);
+  border-bottom: 3px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 5%, var(--color-bg));
+}
+
+.guestbook__sign .reply-form {
+  margin: 0;
+}
+
+.guestbook__sign p {
+  margin: 0;
+}
+
+.guestbook__when {
+  color: color-mix(in srgb, var(--color-text) 65%, transparent);
+}

@@ -1,0 +1,208 @@
+.replies {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-primary) 24%, transparent);
+}
+
+.replies > h2 {
+  margin-bottom: 1rem;
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.replies__signin {
+  color: color-mix(in srgb, var(--color-text) 72%, transparent);
+}
+
+.reply-list {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.reply {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  padding: 1rem 1.1rem;
+  border: 2px solid color-mix(in srgb, var(--color-primary) 16%, transparent);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--color-end) 84%, var(--color-primary));
+}
+
+.reply__main {
+  min-width: 0;
+  flex: 1;
+}
+
+.reply__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  margin: 0 0 0.35rem;
+}
+
+.reply__name {
+  font-weight: 700;
+}
+
+a.reply__name {
+  color: var(--color-primary);
+}
+
+.reply__badge {
+  padding: 0.1rem 0.55rem;
+  border: 1px solid color-mix(in srgb, var(--color-text) 35%, transparent);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.reply__badge--owner {
+  border-color: var(--color-secondary);
+  color: var(--color-dark);
+  background: var(--color-secondary);
+}
+
+.reply__date {
+  color: color-mix(in srgb, var(--color-text) 65%, transparent);
+  font-size: 0.85rem;
+}
+
+.reply__body {
+  margin: 0;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.reply__like {
+  appearance: none;
+  margin-top: 0.6rem;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  border-radius: 999px;
+  background: none;
+  color: var(--color-text);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.reply__like:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.reply__like--on {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.reply__sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.reply-form {
+  display: grid;
+  gap: 0.6rem;
+  max-width: 44rem;
+  margin: 1rem 0 2rem;
+}
+
+.reply-form label {
+  font-weight: 700;
+}
+
+.reply-form textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 2px solid color-mix(in srgb, var(--color-primary) 40%, transparent);
+  border-radius: 7px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.reply-form__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.reply-form__count {
+  color: color-mix(in srgb, var(--color-text) 65%, transparent);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.reply-form__error {
+  margin: 0;
+  color: #b3261e;
+}
+
+.dark-mode .reply-form__error {
+  color: #ff8a80;
+}
+
+@media (max-width: 420px) {
+  .reply {
+    gap: 0.75rem;
+    padding: 0.85rem;
+  }
+}
+
+.account-replies {
+  max-width: 44rem;
+  margin: 0 auto 2rem;
+  text-align: left;
+}
+
+.account-reply-list {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.account-reply {
+  padding: 0.9rem 1rem;
+  border: 1px solid color-mix(in srgb, var(--color-primary) 30%, transparent);
+  border-radius: 7px;
+}
+
+.account-reply__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.75rem;
+  margin: 0 0 0.4rem;
+}
+
+.account-reply__status {
+  padding: 0.1rem 0.55rem;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.account-reply__status--pending { color: #946300; }
+.account-reply__status--approved { color: #237a43; }
+.account-reply__status--rejected { color: #a23b46; }
+
+.dark-mode .account-reply__status--pending { color: #e8b332; }
+.dark-mode .account-reply__status--approved { color: #7ac555; }
+.dark-mode .account-reply__status--rejected { color: #ff8a97; }

@@ -25,15 +25,14 @@ export default function MyCommissions() {
         <p className="account-note">You have no commission requests yet. <Link to="/commissions">Learn about commissions</Link></p>
       ) : (
         <table className="account-table">
-          <thead><tr><th>#</th><th>Portrait</th><th>Estimate</th><th>Status</th><th>Requested</th></tr></thead>
+          <thead><tr><th>Request #</th><th>Portrait</th><th>Estimate</th><th>Status</th></tr></thead>
           <tbody>
             {rows.map((c) => (
               <tr key={c.id}>
-                <td><Link to={`/account/commissions/${c.id}`}>{c.id}</Link></td>
+                <td><Link to={`/account/commissions/${c.id}`}>Request {c.id}</Link></td>
                 <td>{c.subject_type === 'pet' ? 'Pet' : 'Person'} · {c.size}</td>
                 <td>{money(c.quoted_cents)}</td>
                 <td>{customerStatus[c.status] ?? c.status}</td>
-                <td>{new Date(String(c.created_at).replace(' ', 'T') + 'Z').toLocaleDateString()}</td>
               </tr>
             ))}
           </tbody>

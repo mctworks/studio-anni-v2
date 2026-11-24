@@ -74,7 +74,7 @@ export default function ContactMessages() {
               <tr key={m.id}>
                 <td>{formatDate(m.created_at)}</td>
                 <td>{m.name}<br />{m.email}</td>
-                <td>{m.excerpt}</td>
+                <td>{m.excerpt}{m.junk && <span className="mim-muted"> · looks like junk</span>}</td>
                 <td>{m.source}</td>
                 <td>
                   <div className="mim-actions">

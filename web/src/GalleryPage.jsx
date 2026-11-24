@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
+import galleryIconLight from './assets/galleries-icon-light-mode.svg';
 import { useTheme } from './ThemeContext.jsx';
 import KenBurnsSlideshow from './KenBurnsSlideshow.jsx';
 
@@ -21,7 +22,7 @@ const CATEGORY_BANNER_IMAGE_COUNT = 5;
 const GALLERY_BANNER_CONFIG = {
   intervalMs: 5630,
   fadeMs: 1800,
-  aspectRatio: '16 / 7',
+  aspectRatio: '14 / 7',
   effects: [
     'classic-in-bottom-left-center',
     'pan-left-right',

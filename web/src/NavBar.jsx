@@ -78,6 +78,7 @@ const NavBar = () => {
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/gallery'); }}>Galleries</button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/archive'); }}>Past Works</button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/commissions'); }}>Commissions</button>
+          <button type="button" onClick={() => { setMenuOpen(false); navigate('/guestbook'); }}>Guestbook</button>
           <button type="button" onClick={() => { setMenuOpen(false); navigate('/about'); }}>About</button>
           {staff && (
             <button type="button" onClick={() => { setMenuOpen(false); navigate('/mimosa'); }}>MIMOSA</button>

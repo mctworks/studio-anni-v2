@@ -72,6 +72,7 @@ final class CustomerAuthController
         if (($b['website'] ?? '') !== '' || $sentAt === 0 || time() - $sentAt < self::MIN_FORM_SECONDS) {
             return $this->err($response, 400, 'invalid_request');
         }
+        $email = is_string($b['email'] ?? null) ? Users::normalizeEmail($b['email']) : '';
         if ($this->senders->blocked($ip, $email, false)) {
             return Json::write($response, ['status' => 'verify_required', 'csrfToken' => Csrf::token($_SESSION)]);
         }
@@ -79,7 +80,6 @@ final class CustomerAuthController
             return $this->err($response, 429, 'too_many_attempts');
         }
 
-        $email = is_string($b['email'] ?? null) ? Users::normalizeEmail($b['email']) : '';
         $username = is_string($b['username'] ?? null) ? strtolower(trim($b['username'])) : '';
         $display = is_string($b['displayName'] ?? null) ? trim($b['displayName']) : '';
         $password = is_string($b['password'] ?? null) ? $b['password'] : '';
@@ -342,6 +342,46 @@ final class CustomerAuthController
         $this->audit->record('profile_updated', $id, 'user', (string) $id, ['fields' => array_keys($clean)], ClientIp::from($request), $request->getHeaderLine('User-Agent'));
 
         return Json::write($response, ['profile' => $this->customers->own($id)]);
+    }
+
+    public function changePassword(Request $request, Response $response): Response
+    {
+        $user = $request->getAttribute('user');
+        if ($user['role'] !== 'customer') {
+            return $this->err($response, 403, 'forbidden');
+        }
+
+        $b = $this->body($request);
+        $current = is_string($b['currentPassword'] ?? null) ? $b['currentPassword'] : '';
+        $password = is_string($b['newPassword'] ?? null) ? $b['newPassword'] : '';
+        if ($current === '' || strlen($current) > PasswordService::MAX_BYTES || $password === '') {
+            return $this->err($response, 400, 'invalid_request');
+        }
+
+        $id = (int) $user['id'];
+        $ip = ClientIp::from($request);
+        if ($this->limits->tooMany('password_change', $id . ':' . $ip, 5, 900)) {
+            return $this->err($response, 429, 'too_many_attempts');
+        }
+        $this->limits->hit('password_change', $id . ':' . $ip);
+
+        if (! $this->passwords->verify($current, (string) $user['password_hash'])) {
+            return $this->err($response, 401, 'invalid_current_password');
+        }
+        foreach ($this->passwords->validate($password) as $code) {
+            return $this->err($response, 422, 'validation', ['fields' => ['password' => $code]]);
+        }
+        if ($this->passwords->verify($password, (string) $user['password_hash'])) {
+            return $this->err($response, 422, 'validation', ['fields' => ['password' => 'same_password']]);
+        }
+
+        $this->users->setPasswordHash($id, $this->passwords->hash($password));
+        $this->sessions->revokeUser($id, true);
+        $this->devices->revokeAll($id);
+        $this->audit->record('password_changed', $id, null, null, [], $ip, $request->getHeaderLine('User-Agent'));
+        $this->mailer->send((string) $user['email'], 'Your Studio Anni password was changed', "The password on your Studio Anni account was just changed.\n\nIf this was not you, contact us right away.");
+
+        return Json::write($response, ['status' => 'ok']);
     }
 
     public function uploadAvatar(Request $request, Response $response): Response

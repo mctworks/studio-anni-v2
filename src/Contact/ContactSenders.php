@@ -118,6 +118,17 @@ final class ContactSenders
         return $st->rowCount() === 1;
     }
 
+        public static function junk(string $email, string $excerpt): bool
+    {
+        $text = trim($excerpt);
+        if (mb_strlen($text) >= 12 && preg_match('/\s/u', $text) === 0) {
+            return true;
+        }
+        [$local, $domain] = array_pad(explode('@', strtolower($email), 2), 2, '');
+
+        return $domain === 'gmail.com' && substr_count($local, '.') >= 3;
+    }
+
     /**
      * @param list<array<string, mixed>> $blocks
      * @return array{email: bool, domain: bool, ip: bool}

@@ -1,7 +1,7 @@
 .ken-burns-slideshow {
   position: relative;
   width: 100%;
-  aspect-ratio: var(--kb-aspect-ratio, 16 / 7);
+  aspect-ratio: var(--kb-aspect-ratio, 14 / 7);
   overflow: hidden;
   isolation: isolate;
   background: #211b24;

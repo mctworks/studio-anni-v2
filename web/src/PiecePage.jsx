@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import AddToCart from './AddToCart.jsx';
+import PieceComments from './comments/PieceComments.jsx';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import archiveIconDark from './assets/archive-icon-dark-mode.svg';
 import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
@@ -115,6 +116,7 @@ const PiecePage = () => {
           )}
         </div>
       </div>
+      <PieceComments pieceId={piece.id} />
       {showSimilar && similarPieces.length > 0 && (
         <section className="archive-similar" aria-labelledby="archive-similar-heading">
           <h2 id="archive-similar-heading">Similar works available for sale</h2>

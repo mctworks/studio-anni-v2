@@ -32,8 +32,6 @@ const say = (r) => {
 
 const fieldSay = (code) => MESSAGES[code] ?? 'Not valid.';
 
-const showSignup = import.meta.env.VITE_SHOW_SIGNUP === 'true';
-
 function PasswordStep({ go, done }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -64,9 +62,9 @@ function PasswordStep({ go, done }) {
         <input type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
       </label>
       {error && <p className="mim-error" role="alert">{error}</p>}
-      <button type="submit" disabled={busy}>Continue</button>
+      <button type="submit" className="page-nav-button" disabled={busy}>Continue</button>
       <button type="button" className="mim-link" onClick={() => go('forgot')}>Forgot password?</button>
-      {showSignup && <button type="button" className="mim-link" onClick={() => go('register')}>Create an account</button>}
+      <button type="button" className="page-nav-button" onClick={() => go('register')}>or Sign Up for an Account</button>
     </form>
   );
 }

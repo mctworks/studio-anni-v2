@@ -119,7 +119,7 @@ export default function CommissionsPage() {
     <section className="container content-page commissions-page">
       <p className="eyebrow">Custom portraits by Anni</p>
       <KenBurnsSlideshow {...BANNER_CONFIG} images={banner} className="gallery-page__banner" ariaLabel="Recent commissioned portraits">
-        <h1><img src={commissionsLogo} alt="Commissions" width="25%" height="25%"/> COMMISSIONS</h1>
+        <h1><img src={commissionsLogo} alt="Commissions" width="25%" height="25%"/><span className="commissions-heading">COMMISSIONS</span></h1>
       </KenBurnsSlideshow>
 
       <div className={`commission-status commission-status--${availability.tone}`}>

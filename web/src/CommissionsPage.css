@@ -120,3 +120,7 @@
 .commissions-example small {
   opacity: 0.8;
 }
+
+.commissions-heading {
+  font-size: 90%;
+}

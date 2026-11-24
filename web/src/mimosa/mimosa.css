@@ -239,6 +239,39 @@ button.mim-link {
   opacity: 0.8;
 }
 
+.mim-promo-form {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.mim-promo-form > label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.mim-promo-form input:not([type="checkbox"]),
+.mim-promo-form textarea {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mim-promo-form input[type="file"] {
+  max-width: 100%;
+}
+
+.mim-promo-clear {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.mim-promo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 .mim-wm-editor {
   display: grid;
   gap: 1rem;

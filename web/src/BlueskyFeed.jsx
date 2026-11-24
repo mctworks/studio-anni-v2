@@ -283,7 +283,7 @@ const BlueskyFeed = () => {
             <span className="bsky-engagement-count">💬 {Number(post.replyCount || 0).toLocaleString()}</span>
           </div>
           <div className="bsky-post-footer-actions">
-            <a className="page-nav-button" href={postUrl} target="_blank" rel="noreferrer">View on Bsky</a>
+            <button type="button" className="page-nav-button" onClick={() => window.open(postUrl, '_blank', 'noopener,noreferrer')}>View on Bsky</button>
             <RcbScore post={post} />
           </div>
         </footer>
@@ -297,7 +297,7 @@ const BlueskyFeed = () => {
         </div>
         <button type="button" className="page-nav-button" onClick={() => setShowPopular(true)}>Popular posts</button>
         <div className="bsky-pg-bottom">
-          <a className="page-nav-button" href="https://bsky.app/profile/studioanni.com">Follow <img src={bskyLogo} alt="Bluesky" width="16" height="16" />studioanni.com</a>
+          <a className="page-nav-button link-button" href="https://bsky.app/profile/studioanni.com">Follow <img src={bskyLogo} alt="Bluesky" width="16" height="16" />studioanni.com</a>
         </div>
       </div>
     </section>

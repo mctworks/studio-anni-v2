@@ -35,6 +35,7 @@ final class MimosaContactController
             'excerpt' => (string) $r['excerpt'],
             'created_at' => (string) $r['created_at'],
             'blocked' => ContactSenders::flags($blocks, (string) $r['ip'], (string) $r['email']),
+            'junk' => ContactSenders::junk((string) $r['email'], (string) $r['excerpt']),
         ], $rows);
 
         return Json::write($response, ['total' => $total, 'messages' => $messages]);

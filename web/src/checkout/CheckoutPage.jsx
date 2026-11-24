@@ -8,6 +8,7 @@ import Totals from './Totals.jsx';
 import { money } from '../commissionStatus.js';
 import '../account/account.css';
 import './checkout.css';
+import USPSLogo from '../assets/usps-logo.svg';
 
 const errorText = {
   empty_cart: 'Your cart is empty.',
@@ -101,7 +102,7 @@ export default function CheckoutPage() {
         <form className="account-form" onSubmit={getQuote}>
           <fieldset className="checkout-method">
             <legend>Delivery</legend>
-            <label className="account-check"><input type="radio" name="method" checked={method === 'ship'} onChange={() => setMethod('ship')} /> Ship to me</label>
+            <label className="account-check"><input type="radio" name="method" checked={method === 'ship'} onChange={() => setMethod('ship')} /> <img src={USPSLogo} alt="USPS" width="25" /> Ship to me (USPS)</label>
             <label className="account-check"><input type="radio" name="method" checked={method === 'pickup'} onChange={() => setMethod('pickup')} /> Local pickup (no shipping fee)</label>
           </fieldset>
           {method === 'ship' && (
@@ -148,7 +149,7 @@ export default function CheckoutPage() {
             <h2>{quote.method === 'pickup' ? 'Pickup' : 'Shipments'}</h2>
             {quote.shipments.map((shipment, i) => (
               <div className="checkout-shipment" key={`${shipment.address_id ?? 'pickup'}-${i}`}>
-                {quote.method === 'pickup' ? <strong>Local pickup</strong> : (
+                {quote.method === 'pickup' ? <strong>Local pickup (Atlanta, GA area)</strong> : (
                   <>
                     <strong>{shipment.label || shipment.address.recipient}</strong>
                     <span>{shipment.address.recipient}, {shipment.address.line1}{shipment.address.line2 ? `, ${shipment.address.line2}` : ''}, {shipment.address.city}, {shipment.address.region} {shipment.address.postal_code}</span>
@@ -159,7 +160,7 @@ export default function CheckoutPage() {
             ))}
           </section>
           <Totals
-            rows={[['Subtotal', quote.subtotal_cents], ['Shipping', quote.shipping_cents], ['Sales tax', quote.tax_cents]]}
+            rows={[['Subtotal', quote.subtotal_cents], ['Shipping (USPS)', quote.shipping_cents], ['Sales Tax', quote.tax_cents]]}
             total={quote.total_cents}
           />
           {quote.method === 'pickup' && <p className="account-note">We will contact you to arrange local pickup.</p>}

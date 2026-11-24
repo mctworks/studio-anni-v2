@@ -1,6 +1,7 @@
 import { lazy, Suspense, useLayoutEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import LandingPage from './LandingPage.jsx';
+import AboutPage from './AboutPage.jsx';
 import GalleryPage from './GalleryPage.jsx';
 import ArchivePage from './ArchivePage.jsx';
 import PiecePage from './PiecePage.jsx';
@@ -8,11 +9,13 @@ import CommissionsPage from './CommissionsPage.jsx';
 import CommissionRequestPage from './CommissionRequestPage.jsx';
 import CommissionStatusPage from './account/CommissionStatusPage.jsx';
 import CartPage from './CartPage.jsx';
+import GuestbookPage from './GuestbookPage.jsx';
 import CheckoutPage from './checkout/CheckoutPage.jsx';
 import PayCommissionPage from './checkout/PayCommissionPage.jsx';
 import PaymentCompletePage from './checkout/PaymentCompletePage.jsx';
 import AccountPage from './account/AccountPage.jsx';
 import PublicProfilePage from './account/PublicProfilePage.jsx';
+import ResetPasswordPage from './account/ResetPasswordPage.jsx';
 import LoginPage from './LoginPage.jsx';
 import NavBar from './NavBar.jsx';
 import Footer from './Footer.jsx';
@@ -41,6 +44,7 @@ function Site() {
         <main>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/gallery" element={<GalleryPage />} />
             <Route path="/gallery/:categorySlug" element={<GalleryPage />} />
             <Route path="/archive" element={<ArchivePage />} />
@@ -48,9 +52,11 @@ function Site() {
             <Route path="/commissions/request" element={<CommissionRequestPage />} />
             <Route path="/account/commissions/:id" element={<CommissionStatusPage />} />
             <Route path="/account/commissions/:id/pay" element={<PayCommissionPage />} />
+            <Route path="/guestbook" element={<GuestbookPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/payment/complete" element={<PaymentCompletePage />} />
+            <Route path="/reset" element={<ResetPasswordPage />} />
             <Route path="/pieces/:pieceKey" element={<PiecePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/account" element={<AccountPage />} />

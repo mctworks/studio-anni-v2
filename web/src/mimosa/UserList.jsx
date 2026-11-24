@@ -13,6 +13,11 @@ export default function UserList() {
   const [offset, setOffset] = useState(0);
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+  const [pending, setPending] = useState(0);
+
+  useEffect(() => {
+    api.get('/replies?status=pending&limit=1').then((d) => setPending(d.meta.pending)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -56,6 +61,7 @@ export default function UserList() {
     <section>
       <div className="mim-bar">
         <h2>Users</h2>
+        <Link to="/mimosa/users/replies">Customer Replies{pending > 0 ? ` (${pending} awaiting)` : ''}</Link>
       </div>
 
       <div className="mim-filters">

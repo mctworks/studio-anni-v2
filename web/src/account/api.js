@@ -41,12 +41,20 @@ export const account = {
   deleteAddress: (id) => request(`/addresses/${id}`, 'DELETE'),
   forgot: (email) => request('/password/forgot', 'POST', { email }),
   resetPassword: (token, password) => request('/password/reset', 'POST', { token, password }),
+  changePassword: (currentPassword, newPassword) => request('/password/change', 'POST', { currentPassword, newPassword }),
   uploadAvatar: (file) => {
     const f = new FormData();
     f.append('file', file);
     return request('/profile/avatar', 'POST', f);
   },
   removeAvatar: () => request('/profile/avatar', 'DELETE'),
+  replies: () => request('/replies', 'GET'),
+  postGuestbook: (body) => request('/guestbook', 'POST', { body }),
+  postPieceComment: (pieceId, body) => request(`/pieces/${pieceId}/comments`, 'POST', { body }),
+  deleteReply: (kind, id) => request(`/replies/${kind}/${id}`, 'DELETE'),
+  likedComments: (pieceId) => request(`/comments/liked?piece_id=${pieceId}`, 'GET'),
+  likeComment: (id) => request(`/comments/${id}/like`, 'POST', {}),
+  unlikeComment: (id) => request(`/comments/${id}/like`, 'DELETE'),
   commissions: () => request('/commissions', 'GET'),
   commission: (id) => request(`/commissions/${id}`, 'GET'),
   requestCommission: (formData) => request('/commissions', 'POST', formData),

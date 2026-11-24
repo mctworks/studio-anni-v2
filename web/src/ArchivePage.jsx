@@ -25,7 +25,7 @@ const ARCHIVE_BANNER_SLUGS = [
 const ARCHIVE_BANNER_CONFIG = {
   intervalMs: 5630,
   fadeMs: 1800,
-  aspectRatio: '16 / 7',
+  aspectRatio: '10 / 7',
   effects: [
     'classic-in-bottom-left-center',
     'pan-left-right',
@@ -206,7 +206,7 @@ const ArchivePage = () => {
           </div>
           <nav className="archive-page__pagination" aria-label="Archive pages">
             <button className="page-nav-button" type="button" onClick={() => changePage(page - 1)} disabled={page <= 1}>← Previous</button>
-            <span aria-current="page">Page {page} of {pageCount}</span>
+            <span className="archive-page__pagination-current" aria-current="page">Page {page} of {pageCount}</span>
             <button className="page-nav-button" type="button" onClick={() => changePage(page + 1)} disabled={page >= pageCount}>Next →</button>
           </nav>
         </>

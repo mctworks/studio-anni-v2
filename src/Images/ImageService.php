@@ -74,6 +74,16 @@ final class ImageService
         }
     }
 
+    public function ensurePublicDir(string $dir): void
+    {
+        if (! is_dir($dir) && ! @mkdir($dir, 0755, true) && ! is_dir($dir)) {
+            throw new ImageException('storage_unavailable', 500);
+        }
+        if (! @chmod($dir, 0755) && (((fileperms($dir) ?: 0) & 0777) !== 0755)) {
+            throw new ImageException('storage_unavailable', 500);
+        }
+    }
+
     public function requireGd(): void
     {
         if (! extension_loaded('gd') || (imagetypes() & (IMG_JPG | IMG_PNG)) !== (IMG_JPG | IMG_PNG)) {

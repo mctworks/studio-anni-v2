@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from './api.js';
 import { centsToDollars, formatDate } from './util.js';
+import PromoEditor from './PromoEditor.jsx';
 
 const AVAILABILITY = [
   ['open', 'Accepting commissions'],
@@ -171,10 +172,7 @@ export default function CommissionsHome() {
         )}
       </section>
 
-      <section className="mim-panel">
-        <h3>Latest announcements</h3>
-        <p className="mim-note">The CTA and announcements component will be controlled from here once it is built.</p>
-      </section>
+      <PromoEditor />
     </section>
   );
 }
