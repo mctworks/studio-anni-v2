@@ -3,7 +3,9 @@ import AddToCart from './AddToCart.jsx';
 import PieceComments from './comments/PieceComments.jsx';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import archiveIconDark from './assets/archive-icon-dark-mode.svg';
+import archiveIconLight from './assets/archive-icon-light-mode.svg';
 import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
+import galleryIconLight from './assets/galleries-icon-light-mode.svg';
 
 const GALLERY_CATEGORIES = {
   'pets-animals': 'Animals',
@@ -88,11 +90,15 @@ const PiecePage = () => {
     ? `Back to ${galleryCategory ? `${GALLERY_CATEGORIES[galleryCategory.slug]} Gallery` : 'Galleries'}`
     : 'Back to Archives';
   const backIcon = piece.status === 'available' ? galleryIconDark : archiveIconDark;
+  const backIconLight = piece.status === 'available' ? galleryIconLight : archiveIconLight;
 
   return (
     <article className="container content-page piece-page">
-      <button className="page-nav-button piece-page__back" type="button" onClick={() => navigate(backPath)}>
-        ← <img src={backIcon} alt="" aria-hidden="true" width="24" height="24" /> {backLabel}
+      <button className="page-nav-button landing-nav-button piece-page__back" type="button" onClick={() => navigate(backPath)}>
+        ← <span className="landing-nav-button__icon" aria-hidden="true">
+          <img className="landing-nav-button__icon-dark" src={backIcon} alt="" width="24" height="24" />
+          <img className="landing-nav-button__icon-light" src={backIconLight} alt="" width="24" height="24" />
+        </span> {backLabel}
       </button>
       <div className="piece-detail">
         <div className="piece-detail__visual">

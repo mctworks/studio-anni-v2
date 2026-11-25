@@ -19,6 +19,7 @@ use App\Http\HealthController;
 use App\Http\BlueskyController;
 use App\Http\PieceController;
 use App\Http\SpaController;
+use App\Http\SitemapController;
 use App\Http\PublicProfileController;
 use App\Http\Middleware\AccountsSwitchMiddleware;
 use App\Http\Middleware\CustomerAuthMiddleware;
@@ -142,6 +143,7 @@ final class Routes
         $app->get('/api/guestbook', [CommentController::class, 'guestbook'])->add(AccountsSwitchMiddleware::class);
         $app->get('/api/pieces/{id:[0-9]+}/comments', [CommentController::class, 'pieceComments'])->add(AccountsSwitchMiddleware::class);
         $app->post('/api/stripe/webhook', [StripeWebhookController::class, 'handle']);
+        $app->get('/sitemap.xml', SitemapController::class);
         $app->get('/api/health', HealthController::class);
         $app->get('/api/contact/token', [ContactController::class, 'token']);
         $app->post('/api/contact', [ContactController::class, 'send']);

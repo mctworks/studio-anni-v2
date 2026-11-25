@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import galleryIconDark from './assets/galleries-icon-dark-mode.svg';
 import galleryIconLight from './assets/galleries-icon-light-mode.svg';
-import { useTheme } from './ThemeContext.jsx';
 import KenBurnsSlideshow from './KenBurnsSlideshow.jsx';
 
 const categories = [
@@ -84,7 +83,6 @@ const PieceGrid = ({ pieces, unavailable = false }) => {
 const GalleryPage = () => {
   const { categorySlug } = useParams();
   const navigate = useNavigate();
-  const { isDarkMode } = useTheme();
   const category = categories.find((item) => item.slug === categorySlug);
   const [availablePieces, setAvailablePieces] = useState([]);
   const [unavailablePieces, setUnavailablePieces] = useState([]);
@@ -293,7 +291,12 @@ const GalleryPage = () => {
 
   return (
     <section className="container content-page gallery-page">
-      <button className="page-nav-button" type="button" onClick={() => navigate('/gallery')}>← <img src={isDarkMode ? galleryIconDark : galleryIconLight} alt="Galleries" width="24" height="24" /> Gallery Selection</button>
+      <button className="page-nav-button landing-nav-button" type="button" onClick={() => navigate('/gallery')}>
+        ← <span className="landing-nav-button__icon" aria-hidden="true">
+          <img className="landing-nav-button__icon-dark" src={galleryIconDark} alt="" width="24" height="24" />
+          <img className="landing-nav-button__icon-light" src={galleryIconLight} alt="" width="24" height="24" />
+        </span> Gallery Selection
+      </button>
       <p className="eyebrow">GALLERIES: Original paintings by Anni</p>
       <KenBurnsSlideshow
         {...GALLERY_BANNER_CONFIG}

@@ -157,7 +157,7 @@ const ArchivePage = () => {
         className="gallery-page__banner"
         ariaLabel="Featured paintings from the archive"
       >
-        <h1><img src={isDarkMode ? archiveIconDark : archiveIconLight} alt="Archive" width="25%" height="25%" /><br/> PAST WORKS</h1>
+        <h1><img src={archiveIconDark} alt="Archive" width="25%" height="25%" /><br/> PAST WORKS</h1>
       </KenBurnsSlideshow>
       <p className="section-lede">Browse paintings that have sold, are in the studio, or are currently on display. Archived works are not available for purchase.</p>
 

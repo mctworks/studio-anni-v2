@@ -28,7 +28,8 @@
   --color-dark: #322e32;
   --color-light: #fbe3fd;
   --color-end: #fff;
-  --color-secondary: #00853f;
+  --color-start: #000;
+  --color-secondary: #005C2B;
 }
 
 .dark-mode
@@ -36,6 +37,7 @@
   --color-text: #fbe3fd;
   --color-bg: #322e32;
   --color-end: #000;
+  --color-start: #fff;
   --color-secondary: #7ee2a8;
   background-color: var(--color-bg);
 }
@@ -707,7 +709,7 @@ span.bsky-pg-count {
 
 .bsky-lb-button:hover,
 .bsky-lb-button:focus-visible {
-  background-color: var(--color-secondary);
+  background-color: mix(var(--color-secondary), var(--color-start), 75%);
   color: var(--color-dark);
 }
 
@@ -929,7 +931,7 @@ span.bsky-pg-count {
 
 .page-nav-button:hover,
 .page-nav-button:focus-visible {
-  background-color: var(--color-secondary);
+  background-color: color-mix(in srgb, var(--color-light) 65%, var(--color-secondary));
   color: var(--color-dark);
   transform: translateY(-1px);
 }

@@ -32,7 +32,21 @@ export default defineConfig(({ command, mode }) => {
   return {
     plugins: [react(), localMedia()],
     base: command === 'build' ? '/app/' : '/',
-    build: { outDir: '../public/app', emptyOutDir: true },
+    build: {
+      outDir: '../public/app',
+      emptyOutDir: true,
+      rolldownOptions: {
+        output: {
+          // Long-lived vendor chunks cache across deploys; app code changes more often.
+          codeSplitting: {
+            groups: [
+              { name: 'react-vendor', test: /node_modules[\\/](react|react-dom|react-router|react-router-dom|scheduler)[\\/]/, priority: 20 },
+              { name: 'gsap', test: /node_modules[\\/]gsap[\\/]/, priority: 10 },
+            ],
+          },
+        },
+      },
+    },
     server: {
       proxy: {
         '/api': {

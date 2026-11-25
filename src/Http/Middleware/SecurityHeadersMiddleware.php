@@ -21,8 +21,9 @@ final class SecurityHeadersMiddleware implements MiddlewareInterface
         $response = $handler->handle($request);
 
         $connect = trim("'self' https://api.stripe.com " . $this->config->get('CSP_CONNECT_EXTRA', ''));
+        $script = trim($this->config->get('CSP_SCRIPT_EXTRA', ''));
         $img = trim("'self' data: blob: https://cdn.bsky.app https://*.stripe.com " . $this->config->get('CSP_IMG_EXTRA', ''));
-        $policy = "default-src 'self'; script-src 'self' https://js.stripe.com; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com; style-src 'self'; img-src {$img}; font-src 'self'; connect-src {$connect}; "
+        $policy = "default-src 'self'; script-src 'self' https://js.stripe.com {$script}; frame-src https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com; style-src 'self'; img-src {$img}; font-src 'self'; connect-src {$connect}; "
             . "object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'";
         $cspHeader = $this->config->get('CSP_MODE', 'report-only') === 'enforce' ? 'Content-Security-Policy' : 'Content-Security-Policy-Report-Only';
 

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useLayoutEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useLayoutEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import LandingPage from './LandingPage.jsx';
 import AboutPage from './AboutPage.jsx';
@@ -7,22 +7,23 @@ import ArchivePage from './ArchivePage.jsx';
 import PiecePage from './PiecePage.jsx';
 import CommissionsPage from './CommissionsPage.jsx';
 import CommissionRequestPage from './CommissionRequestPage.jsx';
-import CommissionStatusPage from './account/CommissionStatusPage.jsx';
 import CartPage from './CartPage.jsx';
 import GuestbookPage from './GuestbookPage.jsx';
-import CheckoutPage from './checkout/CheckoutPage.jsx';
-import PayCommissionPage from './checkout/PayCommissionPage.jsx';
-import PaymentCompletePage from './checkout/PaymentCompletePage.jsx';
-import AccountPage from './account/AccountPage.jsx';
-import PublicProfilePage from './account/PublicProfilePage.jsx';
-import ResetPasswordPage from './account/ResetPasswordPage.jsx';
 import LoginPage from './LoginPage.jsx';
 import NavBar from './NavBar.jsx';
 import Footer from './Footer.jsx';
 import { AuthProvider } from './AuthContext.jsx';
 import { CartProvider } from './CartContext.jsx';
 import { ThemeProvider } from './ThemeContext.jsx';
+import { trackPageView } from './analytics.js';
 
+const CommissionStatusPage = lazy(() => import('./account/CommissionStatusPage.jsx'));
+const CheckoutPage = lazy(() => import('./checkout/CheckoutPage.jsx'));
+const PayCommissionPage = lazy(() => import('./checkout/PayCommissionPage.jsx'));
+const PaymentCompletePage = lazy(() => import('./checkout/PaymentCompletePage.jsx'));
+const AccountPage = lazy(() => import('./account/AccountPage.jsx'));
+const PublicProfilePage = lazy(() => import('./account/PublicProfilePage.jsx'));
+const ResetPasswordPage = lazy(() => import('./account/ResetPasswordPage.jsx'));
 const Mimosa = lazy(() => import('./mimosa/Mimosa.jsx'));
 
 function ScrollToTop() {
@@ -35,6 +36,18 @@ function ScrollToTop() {
   return null;
 }
 
+function Analytics() {
+  const { pathname, search } = useLocation();
+
+  useEffect(() => {
+    // Wait a tick so document.title has been updated by the new page.
+    const t = window.setTimeout(() => trackPageView(pathname, search), 150);
+    return () => window.clearTimeout(t);
+  }, [pathname, search]);
+
+  return null;
+}
+
 function Site() {
   return (
     <div id="outer-container">
@@ -42,6 +55,7 @@ function Site() {
       <div id="page-wrap">
         <NavBar />
         <main>
+          <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<AboutPage />} />
@@ -63,6 +77,7 @@ function Site() {
             <Route path="/u/:username" element={<PublicProfilePage />} />
             <Route path="*" element={<div>404 Not Found</div>} />
           </Routes>
+          </Suspense>
         </main>
         <Footer />
       </div>
@@ -122,6 +137,7 @@ export default function App() {
     <ThemeProvider>
       <AuthProvider>
         <CartProvider>
+          <Analytics />
           <PageTransitions />
         </CartProvider>
       </AuthProvider>

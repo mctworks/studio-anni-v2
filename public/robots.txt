@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /api/
+Disallow: /mimosa
+Disallow: /account
+Disallow: /cart
+Disallow: /checkout
+Disallow: /payment/
+Disallow: /login
+Disallow: /reset
+
+Sitemap: https://studioanni.com/sitemap.xml
