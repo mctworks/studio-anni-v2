@@ -550,6 +550,68 @@ span.bsky-pg-count {
   border-radius: 7px;
 }
 
+.bsky-link-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  width: min(100%, 560px);
+  margin: 1.25rem 0;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent);
+  border-radius: 0.75rem;
+  background: color-mix(in srgb, var(--color-end) 78%, var(--color-primary));
+  color: var(--color-text);
+  text-decoration: none;
+  transition: border-color 180ms ease, transform 180ms ease;
+}
+
+.bsky-link-card:hover,
+.bsky-link-card:focus-visible {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.bsky-link-card__image {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  aspect-ratio: 1.91 / 1;
+  object-fit: cover;
+}
+
+.bsky-link-card__details {
+  display: grid;
+  min-width: 0;
+  gap: 0.4rem;
+  padding: 1rem 1.15rem;
+  text-align: left;
+}
+
+.bsky-link-card__title,
+.bsky-link-card__description,
+.bsky-link-card__domain {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.bsky-link-card__title {
+  line-height: 1.35;
+}
+
+.bsky-link-card__description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--color-text) 82%, transparent);
+  font-size: 0.94rem;
+  line-height: 1.5;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.bsky-link-card__domain {
+  color: color-mix(in srgb, var(--color-text) 68%, transparent);
+  font-size: 0.8rem;
+}
+
 .bluesky-section .section-lede {
   color: var(--color-text);
 }

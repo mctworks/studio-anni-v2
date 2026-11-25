@@ -313,17 +313,17 @@ const GalleryPage = () => {
           <p className="catalog-message">Available works are temporarily unavailable. Please try again shortly.</p>
         ) : availablePieces.length ? (
           <PieceGrid pieces={availablePieces} />
-        ) : <p className="catalog-message">There are no works listed for purchase in this collection right now.</p>}
+        ) : <p className="catalog-message">There are no works listed for purchase in this gallery right now.</p>}
       </section>
       {!category.discounted && (
         <section className="gallery-page__past" aria-labelledby="past-heading">
-          <h2 id="past-heading">Archived works from this collection</h2>
-          <p className="section-lede">A few past works from the collection in the archive.</p>
+          <h2 id="past-heading">Archived works from this gallery</h2>
+          <p className="section-lede">A few past works from this gallery in the archive.</p>
           {loading ? <p className="catalog-message">Loading past works…</p> : error ? (
             <p className="catalog-message">Past works are temporarily unavailable. Please try again shortly.</p>
           ) : unavailablePieces.length ? (
             <PieceGrid pieces={unavailablePieces} unavailable />
-          ) : <p className="catalog-message">There is no recent past work in this collection.</p>}
+          ) : <p className="catalog-message">There is no recent past work in this gallery.</p>}
         </section>
       )}
     </section>

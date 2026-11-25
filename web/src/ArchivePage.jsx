@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import archiveIconDark from './assets/archive-icon-dark-mode.svg';
-import archiveIconLight from './assets/archive-icon-light-mode.svg';
 import { useTheme } from './ThemeContext.jsx';
 import KenBurnsSlideshow from './KenBurnsSlideshow.jsx';
 

@@ -55,12 +55,20 @@ const PostMedia = ({ embed }) => getEmbeds(embed).map((item, index) => {
   }
 
   if (item?.$type === 'app.bsky.embed.external#view' && item.external?.uri) {
+    let domain = '';
+    try {
+      domain = new URL(item.external.uri).hostname.replace(/^www\./, '');
+    } catch {
+      domain = item.external.uri;
+    }
+
     return (
-      <a className="purchase-intro" href={item.external.uri} target="_blank" rel="noreferrer" key={`external-${index}`}>
-        {item.external.thumb && <img src={item.external.thumb} alt="" loading="lazy" />}
-        <span>
-          <strong>{item.external.title || item.external.uri}</strong>
-          {item.external.description && <small>{item.external.description}</small>}
+      <a className="bsky-link-card" href={item.external.uri} target="_blank" rel="noopener noreferrer" key={`external-${index}`}>
+        {item.external.thumb && <img className="bsky-link-card__image" src={item.external.thumb} alt="" loading="lazy" />}
+        <span className="bsky-link-card__details">
+          <strong className="bsky-link-card__title">{item.external.title || domain}</strong>
+          {item.external.description && <span className="bsky-link-card__description">{item.external.description}</span>}
+          <span className="bsky-link-card__domain">{domain}</span>
         </span>
       </a>
     );

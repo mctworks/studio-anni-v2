@@ -163,7 +163,8 @@ function RegisterStep({ go }) {
       {error && <p className="mim-error" role="alert">{error}</p>}
       <button type="submit" disabled={busy}>Create account</button>
       <button type="button" className="mim-link" onClick={() => go('login')}>I already have an account</button>
-      <p>* We will never share your email address, or anything else, with third parties! (We hate spam too!)</p>
+      
+      <p>* We will never share your information with third parties! (We hate spam too!)</p>
     </form> 
   );
 }

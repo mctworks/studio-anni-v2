@@ -9,7 +9,7 @@ const Footer = () => {
       <span className="site-footer__copyright">© {year} Studio Anni LLC</span>
 
       <span className="site-footer__dev">
-        <img src={mct630Logo} alt="MCT630" className="site-footer__logo" />
+        <img src={mct630Logo} alt="MCT630 logo" className="site-footer__logo" />
         Developed by{' '}
         <a
           href="https://mct630.com"

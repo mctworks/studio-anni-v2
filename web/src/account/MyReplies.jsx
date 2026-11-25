@@ -36,7 +36,7 @@ export default function MyReplies() {
 
   return (
     <section className="account-replies">
-      <h2>My guestbook entry and comments</h2>
+      <h2>My Comments</h2>
       {error && <p className="account-error" role="alert">{error}</p>}
       {items === null && !error && <p>Loading…</p>}
       {items?.length === 0 && <p className="account-note">You haven't posted anything yet.</p>}
